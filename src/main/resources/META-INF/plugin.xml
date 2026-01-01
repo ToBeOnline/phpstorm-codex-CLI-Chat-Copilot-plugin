@@ -1,0 +1,38 @@
+<idea-plugin>
+  <id>com.codex.phpstorm</id>
+  <name>Codex Chat</name>
+  <vendor email="support@codex.example" url="https://codex.codes">Codex</vendor>
+
+  <description><![CDATA[
+Codex chat integration for PhpStorm. Provides a docked chat tool window, context-aware prompts, and settings for connecting to your Codex backend.
+  ]]></description>
+
+  <depends>com.intellij.modules.platform</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="Codex" displayType="BALLOON" isLogByDefault="true"/>
+    <applicationConfigurable instance="com.codex.phpstorm.settings.CodexSettingsConfigurable"
+                              displayName="Codex"
+                              id="com.codex.phpstorm.settings.CodexSettingsConfigurable"/>
+    <toolWindow id="Codex Chat"
+                anchor="right"
+                factoryClass="com.codex.phpstorm.toolwindow.CodexToolWindowFactory"
+                icon="/icons/codex.svg"
+                stripeTitle="Codex Chat"/>
+  </extensions>
+
+  <actions>
+    <action id="com.codex.phpstorm.actions.OpenCodexChatToolWindowAction"
+            class="com.codex.phpstorm.actions.OpenCodexChatToolWindowAction"
+            text="Open Codex Chat"
+            description="Open the Codex Chat tool window">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+    <action id="com.codex.phpstorm.actions.SendSelectionToCodexAction"
+            class="com.codex.phpstorm.actions.SendSelectionToCodexAction"
+            text="Ask Codex About Selection"
+            description="Send the selected code to Codex Chat">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </action>
+  </actions>
+</idea-plugin>
