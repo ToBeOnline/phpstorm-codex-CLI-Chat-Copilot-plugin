@@ -24,6 +24,7 @@ intellij {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -42,4 +43,8 @@ tasks.patchPluginXml {
     version.set(providers.gradleProperty("pluginVersion").get())
     sinceBuild.set("233")
     untilBuild.set("")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

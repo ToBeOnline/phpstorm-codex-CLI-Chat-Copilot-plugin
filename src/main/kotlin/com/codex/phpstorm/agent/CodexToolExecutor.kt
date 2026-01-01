@@ -90,12 +90,7 @@ class CodexToolExecutor(private val project: Project) {
     }
 
     private fun resolveProjectPath(relative: String): Path {
-        val root = projectRoot()
-        val resolved = root.resolve(relative).normalize()
-        if (!resolved.startsWith(root)) {
-            throw IllegalArgumentException("Path escapes project root: $relative")
-        }
-        return resolved
+        return CodexAgentPaths.resolveWithinRoot(projectRoot(), relative)
     }
 
     private fun listFiles(args: JsonObject): ToolExecution {
@@ -116,7 +111,7 @@ class CodexToolExecutor(private val project: Project) {
                 val p = iter.next()
                 if (!Files.isRegularFile(p)) continue
                 val rel = root.relativize(p).toString()
-                if (shouldSkip(rel)) continue
+                if (CodexAgentPaths.shouldSkip(rel)) continue
                 files.add(rel)
             }
         }
@@ -238,17 +233,6 @@ class CodexToolExecutor(private val project: Project) {
         }.toString()
         val userSummary = "Ran command: $command (exit ${output.exitCode}${if (output.isTimeout) ", timeout" else ""})"
         return ToolExecution(response, userSummary)
-    }
-
-    private fun shouldSkip(relativePath: String): Boolean {
-        val normalized = relativePath.replace('\\', '/')
-        return normalized.startsWith(".git/") ||
-            normalized.startsWith(".idea/") ||
-            normalized.startsWith("build/") ||
-            normalized.startsWith("out/") ||
-            normalized.startsWith(".gradle/") ||
-            normalized.startsWith("node_modules/") ||
-            normalized.startsWith("vendor/")
     }
 
     private val JsonPrimitive.booleanOrNull: Boolean?
