@@ -11,11 +11,15 @@ import com.intellij.openapi.components.service
 class CodexSettingsState : PersistentStateComponent<CodexSettingsState.State> {
 
     data class State(
+        var backend: String = CodexBackend.OPENAI_API.name,
         var apiBaseUrl: String = "http://localhost:8700/v1",
         var apiKey: String = "",
         var model: String = "codex-chat",
         var temperature: Double = 0.2,
         var systemPrompt: String = "You are Codex, a coding assistant integrated inside PhpStorm.",
+        var codexCliPath: String = "codex",
+        var codexCliExtraArgs: String = "",
+        var codexCliTimeoutMs: Int = 600000,
         var agentModeEnabled: Boolean = false,
         var allowFileRead: Boolean = true,
         var allowFileWrite: Boolean = true,

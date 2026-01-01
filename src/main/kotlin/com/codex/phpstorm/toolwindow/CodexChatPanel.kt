@@ -4,11 +4,13 @@ import com.codex.phpstorm.agent.CodexApprovalDialog
 import com.codex.phpstorm.agent.CodexToolCatalog
 import com.codex.phpstorm.agent.CodexToolExecutor
 import com.codex.phpstorm.client.ChatCompletionMessage
+import com.codex.phpstorm.client.CodexCliClient
 import com.codex.phpstorm.client.CodexClient
 import com.codex.phpstorm.client.ToolCall
 import com.codex.phpstorm.client.ToolDefinition
 import com.codex.phpstorm.notifications.CodexNotifier
 import com.codex.phpstorm.session.CodexSessionService
+import com.codex.phpstorm.settings.CodexBackend
 import com.codex.phpstorm.settings.CodexSettingsState
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
@@ -168,8 +170,10 @@ class CodexChatPanel(private val project: Project) {
         inputArea.text = ""
         appendMessage("You", finalPrompt)
         ensureSystemPrompt()
-        val toolsPreview = CodexToolCatalog.toolsFor(CodexSettingsState.getInstance().state)
-        ensureAgentInstructions(toolsPreview.isNotEmpty())
+        val settings = CodexSettingsState.getInstance().state
+        val backend = runCatching { CodexBackend.valueOf(settings.backend) }.getOrDefault(CodexBackend.OPENAI_API)
+        val toolsPreview = if (backend == CodexBackend.OPENAI_API) CodexToolCatalog.toolsFor(settings) else emptyList()
+        ensureAgentInstructions(backend == CodexBackend.OPENAI_API && toolsPreview.isNotEmpty())
         conversation.add(ChatCompletionMessage(role = "user", content = finalPrompt))
         sendButton.isEnabled = false
         sendButton.text = "Sending..."
@@ -179,14 +183,25 @@ class CodexChatPanel(private val project: Project) {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = true
                 val settings = CodexSettingsState.getInstance().state
-                val tools = CodexToolCatalog.toolsFor(settings)
-                assistantReply = if (tools.isEmpty()) {
-                    val assistant = CodexClient.getInstance(project).createChatCompletion(conversation.toList(), null)
-                        .getOrElse { throw it }
-                    conversation.add(assistant)
-                    assistant.content
-                } else {
-                    runAgentLoop(tools, indicator)
+                val backend = runCatching { CodexBackend.valueOf(settings.backend) }.getOrDefault(CodexBackend.OPENAI_API)
+                assistantReply = when (backend) {
+                    CodexBackend.CODEX_CLI -> {
+                        val result = CodexCliClient.getInstance(project).chat(conversation.toList())
+                        val reply = result.getOrElse { throw it }.text
+                        conversation.add(ChatCompletionMessage(role = "assistant", content = reply))
+                        reply
+                    }
+                    CodexBackend.OPENAI_API -> {
+                        val tools = CodexToolCatalog.toolsFor(settings)
+                        if (tools.isEmpty()) {
+                            val assistant = CodexClient.getInstance(project).createChatCompletion(conversation.toList(), null)
+                                .getOrElse { throw it }
+                            conversation.add(assistant)
+                            assistant.content
+                        } else {
+                            runAgentLoop(tools, indicator)
+                        }
+                    }
                 }
             }
 
