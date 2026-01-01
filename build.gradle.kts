@@ -25,6 +25,7 @@ intellij {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.10.1")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
