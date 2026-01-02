@@ -8,9 +8,13 @@ Codex chat integration for PhpStorm. Provides a docked chat tool window, context
   ]]></description>
 
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.jetbrains.php</depends>
+  <depends>org.jetbrains.plugins.terminal</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <notificationGroup id="Codex" displayType="BALLOON" isLogByDefault="true"/>
+    <postStartupActivity implementation="com.codex.phpstorm.startup.CodexStartupActivity"/>
+    <inline.completion.provider implementation="com.codex.phpstorm.inline.CodexInlineCompletionProvider" order="first"/>
     <applicationConfigurable instance="com.codex.phpstorm.settings.CodexSettingsConfigurable"
                               displayName="Codex"
                               id="com.codex.phpstorm.settings.CodexSettingsConfigurable"/>
@@ -19,6 +23,11 @@ Codex chat integration for PhpStorm. Provides a docked chat tool window, context
                 factoryClass="com.codex.phpstorm.toolwindow.CodexToolWindowFactory"
                 icon="/icons/codex.svg"
                 stripeTitle="Codex Chat"/>
+    <toolWindow id="Codex CLI"
+                anchor="bottom"
+                factoryClass="com.codex.phpstorm.toolwindow.CodexCliToolWindowFactory"
+                icon="/icons/codex.svg"
+                stripeTitle="Codex CLI"/>
   </extensions>
 
   <actions>
@@ -28,11 +37,29 @@ Codex chat integration for PhpStorm. Provides a docked chat tool window, context
             description="Open the Codex Chat tool window">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
+    <action id="com.codex.phpstorm.actions.OpenCodexCliToolWindowAction"
+            class="com.codex.phpstorm.actions.OpenCodexCliToolWindowAction"
+            text="Open Codex CLI"
+            description="Open the Codex CLI tool window">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
     <action id="com.codex.phpstorm.actions.SendSelectionToCodexAction"
             class="com.codex.phpstorm.actions.SendSelectionToCodexAction"
             text="Ask Codex About Selection"
             description="Send the selected code to Codex Chat">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </action>
+    <action id="com.codex.phpstorm.actions.CodexTriggerInlineCompletionAction"
+            class="com.codex.phpstorm.actions.CodexTriggerInlineCompletionAction"
+            text="Codex: Trigger Inline Completion"
+            description="Trigger Codex inline completion (ghost text)">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+    <action id="com.codex.phpstorm.actions.CodexInlineCompletionDiagnosticsAction"
+            class="com.codex.phpstorm.actions.CodexInlineCompletionDiagnosticsAction"
+            text="Codex: Inline Completion Diagnostics"
+            description="Show inline completion diagnostics for Codex">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
   </actions>
 </idea-plugin>

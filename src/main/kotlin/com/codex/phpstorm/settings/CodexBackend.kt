@@ -1,7 +1,8 @@
 package com.codex.phpstorm.settings
 
-enum class CodexBackend {
-    OPENAI_API,
-    CODEX_CLI
-}
+enum class CodexBackend(val displayName: String) {
+    OPENAI_API("OpenAI API"),
+    CODEX_CLI("Codex CLI");
 
+    override fun toString(): String = displayName
+}

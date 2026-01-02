@@ -12,18 +12,30 @@ class CodexSettingsState : PersistentStateComponent<CodexSettingsState.State> {
 
     data class State(
         var backend: String = CodexBackend.OPENAI_API.name,
-        var apiBaseUrl: String = "http://localhost:8700/v1",
+        var apiBaseUrl: String = "https://api.openai.com/v1",
         var apiKey: String = "",
-        var model: String = "codex-chat",
+        var model: String = "gpt-4o-mini",
         var temperature: Double = 0.2,
         var systemPrompt: String = "You are Codex, a coding assistant integrated inside PhpStorm.",
         var codexCliPath: String = "codex",
         var codexCliExtraArgs: String = "",
+        var codexCliModel: String = "",
         var codexCliTimeoutMs: Int = 600000,
         var agentModeEnabled: Boolean = false,
         var allowFileRead: Boolean = true,
         var allowFileWrite: Boolean = true,
-        var allowCommandExecution: Boolean = false
+        var allowCommandExecution: Boolean = false,
+        var inlineCompletionEnabled: Boolean = false,
+        var inlineCompletionOpenAiModel: String = "",
+        var inlineCompletionOpenAiTemperature: Double = 0.1,
+        var inlineCompletionCodexCliModel: String = "",
+        var inlineCompletionCodexCliTemperature: Double = 0.1,
+        var inlineCompletionSuffixChars: Int = 1000,
+        var notifyAboutNewModels: Boolean = true,
+        var notifyAboutPluginUpdates: Boolean = true,
+        var knownOpenAiChatModelIds: MutableList<String> = mutableListOf(),
+        var lastOpenAiModelCheckEpochMs: Long = 0L,
+        var lastSeenPluginVersion: String = ""
     )
 
     private var state = State()

@@ -18,17 +18,18 @@ class CodexCliClient(private val project: Project) {
         val threadId: String?
     )
 
-    fun chat(messages: List<ChatCompletionMessage>): Result<CliResult> {
+    fun chat(messages: List<ChatCompletionMessage>, modelOverride: String? = null, temperatureHint: Double? = null): Result<CliResult> {
         val settings = CodexSettingsState.getInstance().state
-        val prompt = buildPrompt(messages)
+        val prompt = buildPrompt(messages, temperatureHint)
 
         val basePath = project.basePath ?: return Result.failure(IllegalStateException("Project base path is unavailable."))
         val exe = settings.codexCliPath.ifBlank { "codex" }
         val extra = splitArgs(settings.codexCliExtraArgs)
+        val modelArgs = buildModelArgs(modelOverride?.trim().takeIf { !it.isNullOrBlank() } ?: settings.codexCliModel, extra)
 
         val commandLine = GeneralCommandLine(exe)
             .withWorkDirectory(basePath)
-            .withParameters(listOf("exec") + extra + listOf("--color", "never", "--json", "--skip-git-repo-check", prompt))
+            .withParameters(listOf("exec") + modelArgs + extra + listOf("--color", "never", "--json", "--skip-git-repo-check", prompt))
 
         return runCatching {
             val output = CapturingProcessHandler(commandLine).runProcess(settings.codexCliTimeoutMs)
@@ -48,7 +49,7 @@ class CodexCliClient(private val project: Project) {
         }.onFailure { logger.warn("Codex CLI chat failed: ${it.message}", it) }
     }
 
-    private fun buildPrompt(messages: List<ChatCompletionMessage>): String {
+    private fun buildPrompt(messages: List<ChatCompletionMessage>, temperatureHint: Double?): String {
         val sb = StringBuilder()
         sb.append(
             """
@@ -57,6 +58,10 @@ class CodexCliClient(private val project: Project) {
             
             """.trimIndent()
         )
+        if (temperatureHint != null) {
+            val t = temperatureHint.coerceIn(0.0, 1.0)
+            sb.append("Temperature hint: ").append(String.format("%.2f", t)).append(" (lower = more deterministic).\n\n")
+        }
         for (m in messages) {
             val content = m.content ?: continue
             if (m.role == "tool") continue
@@ -119,6 +124,13 @@ class CodexCliClient(private val project: Project) {
             result += current.toString()
         }
         return result
+    }
+
+    private fun buildModelArgs(model: String, extraArgs: List<String>): List<String> {
+        val trimmedModel = model.trim()
+        if (trimmedModel.isEmpty()) return emptyList()
+        val alreadyHasModel = extraArgs.any { it == "-m" || it == "--model" || it.startsWith("--model=") }
+        return if (alreadyHasModel) emptyList() else listOf("-m", trimmedModel)
     }
 
     companion object {

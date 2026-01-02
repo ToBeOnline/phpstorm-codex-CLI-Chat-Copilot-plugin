@@ -1,0 +1,913 @@
+<idea-plugin package="com.intellij.ml.llm" allow-bundled-update="true">
+  <id>com.intellij.ml.llm</id>
+  <version>233.11799.232</version>
+  <idea-version since-build="233.11799.61" until-build="233.11799.*"/>
+  <name>AI Assistant</name>
+  <vendor>JetBrains</vendor>
+
+  <product-descriptor code="AIP" release-date="20231206" release-version="2023300" optional="true"/>
+
+  <description><![CDATA[
+  AI Assistant provides AI-powered features for software development based on the JetBrains AI Service. The service transparently connects you, as an IDE user, to different large language models (LLMs).
+  With AI Assistant, your favorite tools gain new abilities while you are empowered with more information at your fingertips. Free yourself from repetitive tasks and stay in the flow like never before.
+  <br/><br/>
+  All AI-powered features are context-aware, and this helps AI Assistant understand your project. The methods, the containing classes, the usages, and the relevant references from the function bodies, as well as the languages and technologies used in your project will be added to the prompt if it helps provide better results.
+  <br/><br/>
+
+  <b>AI Chat</b><br/>
+  Ask AI Assistant your programming questions or request it to iterate on a task. Once you’re happy with the result, use the <i>Insert Snippet at Caret</i> function to put the AI-generated code into the editor or just copy it over.
+  To ask the AI about a specific code fragment, select it in the editor and invoke an action from the <i>AI Actions</i> menu, which is available in the editor’s context menu. You can also use the <i>Alt+Enter</i> shortcut. The <i>New chat using selection</i> action allows you to provide your own prompt or request.
+  <br/><br/>
+  Additionally, the AI Assistant chat can answer questions related to your project without requiring you to copy and paste relevant code fragments. You can now address requests like “Explain the code in the opened file”, “What is the code in MyClass doing?”, “Rewrite MyClass as an abstract class”, “Summarize my local changes”, and much more!
+  <br/><br/>
+
+  <b>Get errors explained and fixes suggested</b><br/>
+  Need to research an error or find a way to implement an algorithm? Now, you can do this without leaving the IDE. AI Assistant will explain what an error means, suggest a fix for your particular case, or offer a way to refactor the code.
+  <br/><br/>
+  It’s not always clear which part of the code was changed by an LLM. To simplify this workflow, we’ve integrated a new diff view directly into LLM code suggestions. Click on See <i>Diff and Apply</i> to open it and decide which parts of the generated code should be applied.
+  <br/><br/>
+  <b>Commit message generation</b><br/>
+  The commit message dialog now has a <i>Generate Commit Message with AI Assistant</i> icon. Click it to send the diffs of your changes to the LLM, which will generate a commit message describing your changes.
+  <br/><br/>
+
+  <b>Code autocompletion</b><br/>
+  You asked, and we listened! AI Assistant can now autocomplete single lines, entire functions, and even blocks of code in real time based on the project context.
+  The generated code is similar to how you would write code, matching your style and naming conventions. You can press the Tab key to quickly accept the suggestion, or you can reject the suggestion by simply continuing to write your own code.
+  <br/><br/>
+
+  <b>Documentation generation</b><br/>
+  If you need to generate the documentation for a declaration using an LLM, call up the AI Actions menu and select the Write documentation action.
+  <br/><br/>
+  <a href="https://jb.gg/jbsai">Get a free trial of AI Assistant</a>
+  <br/><br/>
+
+  <b>Privacy</b><br/>
+  We take data and code security seriously!
+  We strictly follow the <a href="https://www.jetbrains.com/legal/docs/terms/jetbrains-ai-service/">JetBrains AI Terms of Service</a>, so neither we nor our service providers use your datа or code for training any generative AI models.
+  <br/><br/>
+  <b>With AI Assistant, organizations can benefit from:</b><br/>
+  <ol>
+    <li><b>The latest advancements in AI technology.</b> With the JetBrains AI Service, you will have access to cutting-edge LLMs not only today but also in the future, without having to do research or switch providers.</li>
+    <li><b>Simple license management.</b> Administrators can enable AI Assistant for their organizations on the <a href="https://sales.jetbrains.com/hc/en-gb/articles/14753675807506-How-to-enable-AI-Assistant-for-companies">Administration page</a> in their JetBrains Account.</li>
+    <li><b>Guaranteed code security.</b> AI Assistant does not store or disclose your code snippets, irrespective of whether the data originates from public repositories, private repositories, or local files.</li>
+  </ol>
+
+  <b>Supported languages and frameworks</b><br/>
+  AI Assistant is compatible with a wide range of programming languages, including but not limited to Java, Kotlin, PHP, Python, JavaScript, Ruby, Go, C#, and C++. Drawing from its training on diverse public repositories, it seamlessly operates across a broad spectrum of popular languages, libraries, and frameworks.
+  <br/><br/>
+
+  <b>Troubleshooting</b><br/>
+  Have a question? Take a look at our <a href="https://www.jetbrains.com/ai/faq">FAQ section</a>.
+  <br/><br/>
+  Access to the JetBrains AI Service is currently restricted to the territories where the OpenAI service is available. You can check the full list of territories <a href="https://www.jetbrains.com/legal/docs/terms/jetbrains-ai/service-territory/?_ga=2.147309559.1562350729.1687771582-330846656.1685715322&_gac=1.116266484.1687789205.Cj0KCQjw7uSkBhDGARIsAMCZNJvz_B1CkVfKFPTcTGpJKp-Kg_iwPFVM8E1nFifZzZUPLnXlKTlw5LEaAvV5EALw_wcB&_gl=1*6ue6uo*_ga*MzMwODQ2NjU2LjE2ODU3MTUzMjI.*_ga_9J976DJZ68*MTY4Nzk2NTY0Mi43MjkuMS4xNjg3OTY1NjQ5LjUzLjAuMA..">here</a>.
+  <br/><br/>
+  We value your feedback!
+  You can tell us about your experience via the <i>Share your feedback</i> link in the <i>AI Assistant</i> tool window or by submitting feature requests or bug reports in the <a href="https://youtrack.jetbrains.com/issues/LLM">AI Assistant YouTrack project</a>. Our support engineers are working hard to respond to all questions as soon as possible.
+  ]]></description>
+
+  <category>AI-Powered</category>
+
+  <content>
+    <module name="intellij.ml.llm.devkit"/>
+    <module name="intellij.ml.llm.go"/>
+    <module name="intellij.ml.llm.java"/>
+    <module name="intellij.ml.llm.javaee"/>
+    <module name="intellij.ml.llm.kotlin"/>
+    <module name="intellij.ml.llm.python"/>
+    <module name="intellij.ml.llm.python.ultimate"/>
+    <module name="intellij.ml.llm.jupyter"/>
+    <module name="intellij.ml.llm.cpp"/>
+    <module name="intellij.ml.llm.javascript"/>
+    <module name="intellij.ml.llm.android"/>
+    <module name="intellij.ml.llm.embeddings"/>
+    <module name="intellij.ruby.llm"/>
+    <module name="intellij.php.llm"/>
+    <module name="intellij.ml.llm.performanceTesting"/>
+    <module name="intellij.ml.llm.markdown"/>
+    <module name="intellij.ml.llm.uiTestGeneration"/>
+  </content>
+
+  <dependencies>
+    <plugin id="Git4Idea"/>
+    <plugin id="com.intellij.modules.ultimate"/>
+  </dependencies>
+
+  <resource-bundle>messages.LLMBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.assistantMessageLayouter"
+                    interface="com.intellij.ml.llm.core.chat.layout.AIMessageCharProcessor"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.chatContextProvider"
+                    interface="com.intellij.ml.llm.core.chat.context.ChatContextProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.projectTechnologiesChatContextProvider"
+                    interface="com.intellij.ml.llm.core.chat.context.ProjectTechnologiesChatContextProvider"
+                    dynamic="true"/>
+    <extensionPoint interface="com.intellij.ml.llm.runtimeErrorExplanation.filters.ErrorExplainFilterFactory"
+                    dynamic="true"
+                    name="errorExplainFilterFactory"/>
+    <extensionPoint interface="com.intellij.ml.llm.runtimeErrorExplanation.RuntimeTextPostprocessor"
+                    dynamic="true"
+                    name="runtimeTextPostprocessor"/>
+    <extensionPoint qualifiedName="com.intellij.chatCodeContextProvider"
+                    interface="com.intellij.ml.llm.core.chat.context.ChatCodeContextProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.codeContextProvider"
+                    interface="com.intellij.ml.llm.core.chat.context.CodeContextProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.chatIntentionCandidateProvider"
+                    interface="com.intellij.ml.llm.core.chat.context.ChatIntentionCandidatesProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.codeContextAttachmentsProvider"
+                    interface="com.intellij.ml.llm.core.chat.context.traverser.CodeDependencyCollector"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.chatCodeSnippetProvider"
+                    interface="com.intellij.ml.llm.core.chat.snippets.CodeSnippetProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.chatMessageHandler"
+                    interface="com.intellij.ml.llm.core.chat.session.ChatMessageHandler"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.ml.llm.core.optionsApplicabilityFilter"
+                    interface="com.intellij.ml.llm.core.settings.LLMOptionsApplicabilityFilter"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.chatExampleQueryProvider"
+                    interface="com.intellij.ml.llm.core.chat.ui.chat.AIAssistantChatExampleQueryProvider"
+                    dynamic="true"/>
+    <extensionPoint name="aiAssistantFileReader"
+                    interface="com.intellij.ml.llm.smartChat.psiSummarization.FileReader"
+                    dynamic="true"/>
+    <extensionPoint
+      interface="com.intellij.ml.llm.smartChat.endpoints.SmartChatEndpointProvider"
+      dynamic="true"
+      qualifiedName="com.intellij.smartChatEndpointProvider"
+    />
+    <extensionPoint name="languageSummaryProvider" beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.smartChat.psiSummarization.LanguageSummaryProvider"/>
+    </extensionPoint>
+
+    <extensionPoint
+      interface="com.intellij.ml.llm.smartChat.endpoints.search.AISearchProvider"
+      dynamic="true"
+      qualifiedName="com.intellij.aiSearchProvider"
+    />
+
+    <extensionPoint name="classContextBuilder" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.intellij.ml.llm.context.classbuilder.ClassContextBuilder"/>
+    </extensionPoint>
+    <extensionPoint name="methodContextBuilder" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.intellij.ml.llm.context.methodbuilder.MethodContextBuilder"/>
+    </extensionPoint>
+    <extensionPoint name="fileContextBuilder" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.intellij.ml.llm.context.filebuilder.FileContextBuilder"/>
+    </extensionPoint>
+    <extensionPoint name="variableContextBuilder" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.intellij.ml.llm.context.variablebuilder.VariableContextBuilder"/>
+    </extensionPoint>
+    <extensionPoint name="aiAssistantIntention" beanClass="com.intellij.codeInsight.intention.IntentionActionBean" dynamic="true">
+      <with tag="className" implements="com.intellij.codeInsight.intention.IntentionAction"/>
+    </extensionPoint>
+
+    <extensionPoint name="documentationSupport" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.core.LLMDocumentationSupport"/>
+    </extensionPoint>
+    <extensionPoint name="nameSuggestionContextProvider" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.intellij.ml.llm.core.refactoring.NameSuggestionContextProvider"/>
+    </extensionPoint>
+
+    <extensionPoint name="codeCompletionUnderCommentSupport" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.core.LLMCodeCompletionUnderCommentSupport"/>
+    </extensionPoint>
+
+    <extensionPoint name="generateTestsChatSupport" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.core.LLMGenerateTestsChatSupport"/>
+    </extensionPoint>
+
+    <extensionPoint name="generateTestsSupport" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.core.LLMGenerateTestsSupport"/>
+    </extensionPoint>
+
+    <extensionPoint name="pasteFormattingOptionProvider" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.intellij.ml.llm.core.chat.actions.codeSnippet.formatter.AIMessageOnPasteFormattingOptionProvider"/>
+    </extensionPoint>
+
+    <extensionPoint qualifiedName="com.intellij.inlineCompletionRequestExecutor"
+                    beanClass="com.intellij.util.KeyedLazyInstanceEP"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.completion.inline.requests.CompletionRequestExecutor"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="com.intellij.inlineCompletionLanguageSupport"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.completion.inline.InlineCompletionLanguageSupport"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="com.intellij.inlineCompletionContextCollector"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.ml.llm.completion.inline.InlineCompletionLanguageContextCollector"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="com.intellij.inlineCompletionPriorityProviderFactory"
+                    interface="com.intellij.ml.llm.completion.inline.PriorityProviderFactory"
+                    dynamic="true"/>
+
+    <extensionPoint qualifiedName="com.intellij.assistantKillSwitch"
+                    interface="com.intellij.ml.llm.core.AIAssistantKillSwitch"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.chatContextItemIdentityExtension"
+                    interface="com.intellij.ml.llm.core.chat.context.ChatContextItemIdentityExtension"
+                    dynamic="true"/>
+
+    <extensionPoint qualifiedName="com.intellij.caretCodeProvider"
+                    interface="com.intellij.ml.llm.smartChat.endpoints.CaretCodeProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+<!--    <chatMessageHandler implementation="com.intellij.ml.llm.core.chat.session.impl.SmartChatMessageHandler"/>-->
+    <statistics.actionCustomPlaceAllowlist id="AIAssistantActionCustomPlaceAllowlist" places="popup@AIAssistantInputLeft"/>
+    <diff.DiffTool id="aiUnifiedDiffTool" implementation="com.intellij.ml.llm.core.diff.AIUnifiedDiffTool"/>
+    <diff.DiffTool id="aiTwoSideDiffTool" implementation="com.intellij.ml.llm.core.diff.AITwoSideDiffTool"/>
+    <editorTabColorProvider id="aiDiffTabColorProvider" implementation="com.intellij.ml.llm.core.diff.fileEditor.AIEditorTabColorProvider"/>
+    <postStartupActivity implementation="com.intellij.ml.llm.refactorings.LlmLookupManagerListener$StartupActivity"/>
+
+    <assistantMessageLayouter implementation="com.intellij.ml.llm.core.chat.layout.AIMessageCodeBlockCharProcessor" order="first"/>
+    <smartChatEndpointProvider implementation="com.intellij.ml.llm.smartChat.endpoints.ReadFileProvider"/>
+    <smartChatEndpointProvider implementation="com.intellij.ml.llm.smartChat.endpoints.CurrentFileProvider"/>
+    <smartChatEndpointProvider implementation="com.intellij.ml.llm.smartChat.endpoints.search.SearchEndpointProvider"/>
+    <smartChatEndpointProvider implementation="com.intellij.ml.llm.smartChat.endpoints.vcs.VcsEndpointProvider"/>
+
+    <toolWindow id="AIAssistant"
+                anchor="right"
+                factoryClass="com.intellij.ml.llm.core.chat.AIAssistantToolWindowFactory"
+                icon="com.intellij.ml.llm.MLLlmIcons.AiAssistantToolWindow"
+                secondary="false"
+    />
+
+    <notificationGroup id="AI notification group" displayType="STICKY_BALLOON" bundle="messages.LLMBundle"
+                       key="notification.group.name"/>
+
+    <statistic.eventLog.eventLoggerProvider implementation="com.intellij.ml.llm.core.statistics.llmc.LLMEventLoggerProvider"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.core.statistics.llmc.LLMEventLogger"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.core.statistics.llmc.LLMChatEventsLogger"/>
+    <statistics.validation.customValidationRule implementation="com.intellij.ml.llm.core.statistics.llmc.TrueValidationRule"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.core.statistics.fus.AIAssistantChatEventLogger"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.core.statistics.fus.AIAssistantAuthorizationEventLogger"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.core.statistics.fus.AIFeatureBudgetStatistics"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.core.statistics.fus.AIAssistantEventLogger"/>
+
+    <daemon.highlightInfoFilter implementation="com.intellij.ml.llm.core.chat.snippets.ChatHighlightingFilter"/>
+    <daemon.intentionActionFilter implementation="com.intellij.ml.llm.core.chat.ui.AIAssistantIntentionActionFilter"/>
+
+    <copyPastePostProcessor implementation="com.intellij.ml.llm.intentions.conversion.PasteConvertCopyPasteProcessor"/>
+
+    <copyPastePostProcessor implementation="com.intellij.ml.llm.core.chat.services.paste.CodeSnippetCopyPastePostProcessor"/>
+    <typingActionsExtension implementation="com.intellij.ml.llm.core.chat.services.paste.CodeSnippetPasteCaretMover"/>
+
+    <chatContextProvider implementation="com.intellij.ml.llm.core.chat.context.providers.EnvironmentChatContextProvider"/>
+    <chatContextProvider implementation="com.intellij.ml.llm.core.chat.context.providers.CodeOfConductChatContextProvider"/>
+    <chatContextProvider implementation="com.intellij.ml.llm.core.chat.context.providers.DomainAreaChatContextProvider"/>
+    <chatContextProvider implementation="com.intellij.ml.llm.core.chat.context.providers.IdentityGuardChatContextProvider"/>
+    <chatContextProvider implementation="com.intellij.ml.llm.core.chat.context.providers.ReplyFormatChatContextProvider"/>
+    <chatContextProvider implementation="com.intellij.ml.llm.core.chat.context.providers.RoleChatContextProvider"/>
+    <chatContextProvider implementation="com.intellij.ml.llm.smartChat.FunctionsContextProvider"/>
+    <chatContextProvider implementation="com.intellij.ml.llm.core.chat.context.providers.ProjectChatContextProvider"/>
+
+    <!--suppress PluginXmlValidity -->
+    <inline.completion.provider implementation="com.intellij.ml.llm.completion.inline.LLMInlineCompletionProvider"/>
+    <inline.completion.element.manipulator implementation="com.intellij.ml.llm.completion.inline.LLMInlineCompletionGrayTextElementManipulator"/>
+
+    <enterHandlerDelegate implementation="com.intellij.ml.llm.inspections.EnterEmptyDocumentationHandler"/>
+    <enterHandlerDelegate implementation="com.intellij.ml.llm.inspections.EnterTodoCommentHandler"/>
+
+    <consoleFilterProvider implementation="com.intellij.ml.llm.runtimeErrorExplanation.filters.LLMExplainFilterProvider"/>
+
+    <assistantKillSwitch id="ml.llm.JvmFlagKillSwitch" implementation="com.intellij.ml.llm.core.JvmFlagKillSwitch" order="first"/>
+    <assistantKillSwitch id="ml.llm.RegistryKillSwitch" implementation="com.intellij.ml.llm.core.RegistryKillSwitch" order="after ml.llm.JvmFlagKillSwitch"/>
+    <assistantKillSwitch id="ml.llm.RemDevKillSwitch" implementation="com.intellij.ml.llm.core.RemDevKillSwitch" order="after ml.llm.RegistryKillSwitch"/>
+    <assistantKillSwitch id="ml.llm.AIIdeLicenseKillSwitch" implementation="com.intellij.ml.llm.core.license.AIIdeLicenseKillSwitch" order="after ml.llm.RemDevKillSwitch"/>
+    <assistantKillSwitch id="ml.llm.AIAgreementKillSwitch" implementation="com.intellij.ml.llm.core.license.agreement.AIAgreementKillSwitch" order="after ml.llm.AIIdeLicenseKillSwitch"/>
+    <assistantKillSwitch id="ml.llm.UserSettingKillSwitch" implementation="com.intellij.ml.llm.core.UserSettingKillSwitch" order="after ml.llm.AIAgreementKillSwitch"/>
+    <assistantKillSwitch id="ml.llm.ProjectFileKillSwitch" implementation="com.intellij.ml.llm.core.ProjectFileKillSwitch" order="after ml.llm.UserSettingKillSwitch"/>
+
+    <inlineCompletionRequestExecutor key="openai-chat-gpt" implementationClass="com.intellij.ml.llm.completion.inline.requests.ChatGPTRequestExecutor"/>
+    <inlineCompletionRequestExecutor key="google-all-fast" implementationClass="com.intellij.ml.llm.completion.inline.requests.CodeGeckoRequestExecutor"/>
+    <inlineCompletionRequestExecutor key="google-all-slow" implementationClass="com.intellij.ml.llm.completion.inline.requests.CodeBisonRequestExecutor"/>
+    <inlineCompletionRequestExecutor key="openai-instruct-gpt" implementationClass="com.intellij.ml.llm.completion.inline.requests.InstructGPTRequestExecutor"/>
+
+    <registryKey key="llm.license.show.short.ai.agreement"
+                 defaultValue="true"
+                 description="Indicates if we should show the short version of the agreement dialog"/>
+
+    <registryKey key="llm.license.ai.assistant.release"
+                 defaultValue="true"
+                 description="Indicates if AI Assistant is in eap or release mode"/>
+
+    <registryKey key="llm.license.ai.assistant.enable.trial.license"
+                 defaultValue="true"
+                 description="If enabled, AI Assistant trial is allowed."/>
+
+    <registryKey key="llm.license.ai.assistant.update.period.not.authorized"
+                 defaultValue="10"
+                 description="Frequency of license update if there's no authorization in AI Platform"/>
+
+    <registryKey key="llm.license.ai.assistant.update.period.authorized"
+                 defaultValue="60"
+                 description="Frequency of license update if authorized in AI Platform"/>
+
+    <registryKey key="llm.ai.assistant.show.separate.log.in.dialog"
+                 defaultValue="false"
+                 description="If enabled, AI Assistant will aways open login dialog, if disabled it will do that only on if license user data is available, bug jba token not"/>
+
+    <codeInsight.codeVisionProvider implementation="com.intellij.ml.llm.LLMDocumentationCodeVisionProvider"/>
+    <config.codeVisionGroupSettingProvider implementation="com.intellij.ml.llm.LLMCodeVisionGroupSettingProvider"/>
+
+    <postStartupActivity implementation="com.intellij.ml.llm.core.license.AILicenseManager$StartupActivity"/>
+    <postStartupActivity implementation="com.intellij.ml.llm.core.grazieAPI.GrazieJbaAuthService$StartupActivity"/>
+    <postStartupActivity implementation="com.intellij.ml.llm.core.grazieAPI.GrazieTokenRefresher$StartupActivity"/>
+    <postStartupActivity implementation="com.intellij.ml.llm.core.quota.QuotaManager$QuotaManagerActivity"/>
+
+    <projectConfigurable
+      groupId="tools"
+      instance="com.intellij.ml.llm.core.settings.LLMConfigurable"
+      id="ml.llm.LLMConfigurable"
+      bundle="messages.LLMBundle"
+      key="settings.configurable.display.name"/>
+
+    <projectConfigurable
+      groupId="ml.llm.LLMConfigurable"
+      instance="com.intellij.ml.llm.core.chat.promptLibrary.settings.AIAssistantPromptLibraryConfigurable"
+      id="ml.llm.AIAssistantPromptsLibrary"
+      bundle="messages.LLMBundle"
+      key="settings.configurable.custom.prompts"/>
+    <applicationConfigurable
+      groupId="ml.llm.LLMConfigurable"
+      instance="com.intellij.ml.llm.core.settings.LLMDataSharingConfigurable"
+      id="ml.llm.LLMDataSharingConfigurable"
+      bundle="messages.LLMBundle"
+      key="settings.configurable.data.sharing.display.name"/>
+    <projectConfigurable
+      groupId="ml.llm.LLMConfigurable"
+      instance="com.intellij.ml.llm.core.settings.LLMProjectConfigurable"
+      id="ml.llm.LLMProjectConfigurable"
+      bundle="messages.LLMBundle"
+      key="settings.configurable.project.settings.display.name"/>
+    <iconMapper mappingFile="LLMIconMappings.json"/>
+    <statusBarWidgetFactory id="AIAssistant" implementation="com.intellij.ml.llm.core.chat.ui.statusbar.AIAssistantStatusBarWidgetFactory"/>
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.internal.editor.CodeCompletionIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.internal.editor.FixCodeIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.editor.WriteDocumentationIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.conversion.FileConvertIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.internal.editor.CodeCompletionUnderCommentIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.internal.editor.ApplyCustomEditIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.internal.editor.RefactorThisIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.chat.ExplainCodeChatIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <!--suppress PluginXmlExtensionRegistration -->
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.chat.SuggestRefactoringChatIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.internal.chat.GenerateTestsIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+      <skipBeforeAfter>true</skipBeforeAfter>
+    </ml.llm.aiAssistantIntention>
+
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.intentions.editor.GenerateCodeIntention</className>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+    </ml.llm.aiAssistantIntention>
+
+    <intentionAction>
+      <className>com.intellij.ml.llm.intentions.chat.AIAssistantIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>intention.category.large.language.models</categoryKey>
+      <skipBeforeAfter>true</skipBeforeAfter>
+    </intentionAction>
+
+    <ml.llm.aiAssistantIntention>
+      <className>com.intellij.ml.llm.vcs.summary.SelectionCommitSummaryIntention</className>
+      <bundleName>messages.LLMBundle</bundleName>
+      <categoryKey>action.ai.generated.summary.file.selection.title</categoryKey>
+      <skipBeforeAfter>true</skipBeforeAfter>
+    </ml.llm.aiAssistantIntention>
+
+    <registryKey key="llm.is.internal"
+                 defaultValue="false"
+                 description="Enable internal features for developers of LLM for Code plugin"/>
+    <registryKey key="llm.is.explainFiltersEnabled"
+                 defaultValue="true"
+                 description="Enable runtime error explanation feature (inlays in console)"/>
+    <registryKey key="llm.is.inline.completion.experimental.languages.enabled"
+                 defaultValue="false"
+                 description="Enables inline completion using LLM for experimental languages"/>
+    <registryKey key="llm.completion.model"
+                 defaultValue="[openai-chat-gpt*|google-all-fast|google-all-slow|openai-instruct-gpt|google-chat-bison|google-chat-code-bison]"
+                 description="AI Assistant completion model"/>
+    <registryKey key="llm.is.code.streaming.enabled"
+                 defaultValue="true"
+                 description="Enables code streaming in AI Assistant code actions"/>
+    <registryKey key="llm.for.code.enable.mock.requests"
+                 defaultValue="false"
+                 description="If enabled, emulates requests instead of using Cloud LLM. Used for debug purposes."/>
+    <registryKey key="llm.streaming.mock.response"
+                 defaultValue="false"
+                 description="While providing mock response, split scratch file by spaces and emulate streaming"/>
+    <registryKey key="llm.enable.mock.response"
+                 defaultValue="false"
+                 description="Mocks responses from JetBrains AI with scratch file in test directory"/>
+    <registryKey key="llm.throw.error.on.ai.platform.auth"
+                 defaultValue="[none*|on-register|on-get-access]"
+                 description="Throws an exception on a request to register new user in AI Platform"/>
+    <registryKey key="llm.for.code.enable.name.suggestion.get.dataset"
+                 defaultValue="false"
+                 description="If enabled, integration tests for name suggestion intention are running."/>
+    <registryKey key="llm.streaming.enabled"
+                 defaultValue="true"
+                 description="If enabled, llm responses is streamed token by token if supported."/>
+
+    <registryKey key="llm.fix.problems.in.selected.fragment"
+                 defaultValue="false"
+                 description="Adds an action onto the floating toolbar that fixes detected problems in the selected code fragment."
+                 restartRequired="false"/>
+
+    <registryKey key="llm.request.override.default.temperature"
+                 defaultValue="false"
+                 description="Override Grazie default temperature value"/>
+    <registryKey key="llm.request.custom.temperature.value"
+                 defaultValue="0.0"
+                 description="Temperature that is used in LLM requests by default"/>
+
+    <registryKey key="llm.commit.provide.examples"
+                 description="Whether to provide examples of commit messages to LLM when invoking Generate Commit Message"
+                 defaultValue="false"/>
+
+    <registryKey key="llm.clion.codeContexts.resolveDefinition"
+                 defaultValue="true"
+                 description="Try to provide resolved definition body in code context"/>
+
+    <registryKey key="llm.clion.codeContexts.provideClassRepresentation"
+                 defaultValue="true"
+                 description="Try to provide enclosing class representation for methods in code context"/>
+
+    <registryKey key="llm.clion.codeContexts.externalSymbolsDefinitions"
+                 defaultValue="true"
+                 description="Try to provide resolved definitions of the used non-local symbols in class/function body in code context"/>
+
+    <registryKey key="llm.action.generateCodeInplace.mode"
+                 description="Mode of inplace code generation"
+                 defaultValue="[none|codeSnippet|fullTextDiff*|patchDiff]"
+                 restartRequired="false"/>
+    <registryKey key="llm.chat.model"
+                 defaultValue="[openai-gpt-4*|openai-chat-gpt|openai-chat-gpt-16k]"
+                 description="AI Assistant chat model"/>
+    <registryKey key="llm.action.generateCodeInplace.autoOpenChat"
+                 description="Auto-open chat for inplace code generation"
+                 defaultValue="false"
+                 restartRequired="false"/>
+
+    <registryKey key="llm.action.refactoring.showdiff"
+                 description="Adds an action for providing diff for refactored code in the chat"
+                 defaultValue="true"
+                 restartRequired="false"/>
+
+    <registryKey key="llm.action.convertFile"
+                 defaultValue="true"
+                 description="Enables conversion of files to another language"/>
+    <registryKey key="llm.action.convertPaste.j2k"
+                 defaultValue="false"
+                 description="Enables java to kotlin conversion on paste"/>
+
+    <registryKey key="llm.chat.context.with.dependencies.go"
+                 defaultValue="true"
+                 description="Enables clarifying context collection in chat intentions for Go code"/>
+    <registryKey key="llm.chat.context.with.dependencies.java"
+                 defaultValue="true"
+                 description="Enables clarifying context collection in chat intentions for Java code"/>
+    <registryKey key="llm.chat.context.with.dependencies.kotlin"
+                 defaultValue="true"
+                 description="Enables clarifying context collection in chat intentions for Kotlin code"/>
+    <registryKey key="llm.chat.context.with.dependencies.javascript"
+                 defaultValue="true"
+                 description="Enables clarifying context collection in chat intentions for JavaScript code"/>
+    <registryKey key="llm.chat.context.with.dependencies.python"
+                 defaultValue="true"
+                 description="Enables clarifying context collection in chat intentions for Python code"/>
+    <registryKey key="llm.chat.context.dependencies.depth"
+                 defaultValue="3"
+                 description="Limit the depth of traversing the dependencies"/>
+    <registryKey key="llm.chat.context.code.items.token.limit"
+                 defaultValue="2000"
+                 description="Limit the number of tokens spent on code attachments"/>
+    <registryKey key="llm.chat.long.limit"
+                 defaultValue="0"
+                 description="Limit the number of tokens in the chat's message window. If the value is 0, the current model's context size is used"/>
+
+    <registryKey key="llm.smartChat.endpoints.config"
+                 description="Json config of different smartchat endpoints"
+                 defaultValue="{}"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.maxAllowedConsecutiveFunctionCall"
+                 description="This is the maximum allowed times llm can use smartchat endpoints"
+                 defaultValue="4"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.function.response.token.limit"
+                 description="Token threshold for function response if limit is exceeded the response will be trimmed by limit"
+                 defaultValue="3000"
+                 restartRequired="false"/>
+
+    <registryKey key="llm.smartChat.endpointEnabled.ExpandSearchResult"
+                 defaultValue="true"
+                 description="ExpandSearchResult endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.ExactSearchEndpoint"
+                 defaultValue="true"
+                 description="ExactSearchEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.FindUsagesEndpoint"
+                 defaultValue="true"
+                 description="FindUsagesEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.FindPatternEndpoint.max.usages"
+                 defaultValue="20"
+                 description="Max usages allowed to find in find pattern"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.FindUsagesEndpoint.max.usages"
+                 defaultValue="10"
+                 description="Max usages allowed to find in find usages"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.LocalChangesEndpoint"
+                 defaultValue="true"
+                 description="LocalChangesEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.OutgoingChangesEndpoint"
+                 defaultValue="true"
+                 description="OutgoingChangesEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.VcsLogEndpoint"
+                 defaultValue="true"
+                 description="VcsLogEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.VcsOpenCommitEndpoint"
+                 defaultValue="true"
+                 description="VcsOpenCommitEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.CurrentFileEndpoint"
+                 defaultValue="true"
+                 description="CurrentFileEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.FindPatternEndpoint"
+                 defaultValue="true"
+                 description="CurrentFileEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.GetCodeAtCaretEndpoint"
+                 defaultValue="true"
+                 description="CurrentFileEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.GetOpenedFilesEndpoint"
+                 defaultValue="true"
+                 description="GetOpenedFilesEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.MeaningOfLifeEndpoint"
+                 defaultValue="true"
+                 description="MeaningOfLifeEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.ReadFileEndpoint"
+                 defaultValue="false"
+                 description="ReadFileEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.DjangoModelTextOrSignatureSmartChatEndpoint"
+                 defaultValue="true"
+                 description="DjangoModelTextOrSignatureSmartChatEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.DjangoAllModelsSmartChatEndpoint"
+                 defaultValue="true"
+                 description="DjangoAllModelsSmartChatEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+    <registryKey key="llm.smartChat.endpointEnabled.SemanticSearchEndpoint"
+                 defaultValue="false"
+                 description="SemanticSearchEndpoint endpoint is enabled"
+                 restartRequired="false"/>
+
+    <registryKey key="llm.smartChat.topKSemanticSearch"
+                 defaultValue="10"
+                 description="Value of top-k in SemanticSearchEndpoint"
+                 restartRequired="false"/>
+
+
+    <registryKey key="llm.name.suggestion.context.javascript"
+                 defaultValue="true"
+                 description="Enables additional context collection during rename for JavaScript code"/>
+
+    <registryKey key="llm.inline.completion.log"
+                 defaultValue="false"
+                 description="Enables debug logging of the inline completion"/>
+
+    <registryKey key="llm.inline.completion.firstLineMode"
+                 defaultValue="false"
+                 description="Suggest only the first line initially"/>
+
+    <registryKey key="llm.long.chat.window"
+                 defaultValue="true"
+                 description="Enables sliding window technique for chat, to support long chats"/>
+
+    <projectService serviceImplementation="com.intellij.ml.llm.intentions.internal.editor.EmptyIntentionProviderManager"/>
+    <emptyIntentionProvider implementation="com.intellij.ml.llm.intentions.internal.editor.EmptyIntentionAIProvider"/>
+    <nameSuggestionProvider implementation="com.intellij.ml.llm.refactorings.DefaultNameSuggestionProvider"/>
+    <statistics.applicationUsagesCollector implementation="com.intellij.ml.llm.core.statistics.fus.AIAssistantStateCollector"/>
+    <statistics.projectUsagesCollector implementation="com.intellij.ml.llm.core.statistics.fus.AIAssistantProjectStateCollector"/>
+
+    <registryKey key="llm.generate.commits.summary.instruction"
+                 description="Instruction for LLM for commits summary generation. Commit messages are append following the instruction."
+                 defaultValue="Your task is to generate a well-read summary of changes made in the project. The paragraph should have less than 4 sentences and less than 70 words. Summarize the following commit messages."/>
+
+    <registryKey key="llm.generate.all.commits.summary.instruction"
+                 description="Instruction for LLM for all received commits summary generation. Commit messages are append following the instruction."
+                 defaultValue="Your task is to generate a well-read summary of changes made in the project. The paragraph should have less than 10 sentences and less than 300 words. Summarize the following commit messages."/>
+
+    <registryKey key="llm.commitgen.instruction"
+                 description="Instruction for LLM for commit message generation."
+                 defaultValue="Given the below code differences (diffs), please generate a concise, clear, and straight-to-the-point commit message.\nMake sure to prioritize the main action.\nAvoid overly verbose descriptions or unnecessary details.\nStart with a short sentence in imperative form, no more than 50 characters long.\nThen leave an empty line and continue with a more detailed explanation.\nWrite only one sentence for the first part, and two or three sentences at most for the detailed explanation."/>
+
+    <registryKey key="llm.commitgen.model.profile"
+                 description="Model profile to use for commit message generation."
+                 defaultValue="[gpt-3.5-turbo|gpt-4*]"/>
+
+    <editorNotificationProvider implementation="com.intellij.ml.llm.vcs.summary.PathFilterEditorPanelProvider"/>
+    <registryKey key="llm.generate.commits.summary.recent.path.commit.count"
+                 description="Popular user committed paths list is build by the number of the recent commits"
+                 defaultValue="100"/>
+
+    <editorNotificationProvider implementation="com.intellij.ml.llm.vcs.summary.PathFilterEditorPanelProvider"/>
+    <postStartupActivity implementation="com.intellij.ml.llm.vcs.summary.GenerateSummaryActivity"/>
+    <registryKey key="llm.generate.commit.summary"
+                 description="Enable generate commit summary features: update, file/directory, selected code fragment"
+                 defaultValue="false"/>
+    <registryKey key="llm.log.prompts"
+                 defaultValue="true"
+                 description="Log all prompts to SYSTEM_PATH/PROJECT/ai-assistant-log-data directory"/>
+    <registryKey key="llm.log.prompts.format.injection"
+                 description="Apply special formatting for injected items like Code Snippets, etc."
+                 defaultValue="[original*|injectItems|both]"
+                 restartRequired="false"/>
+
+    <chatMessageHandler implementation="com.intellij.ml.llm.core.chat.actions.MockMessageHandler" order="first"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.completion.inline.LLMInlineCompletionFusStatsCollector"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.ml.llm.completion.inline.LLMInlineCompletionLLMCStatsCollector"/>
+    <postStartupActivity implementation="com.intellij.ml.llm.completion.thirdparty.ThirdPartyConflictManager"/>
+    <actionPromoter implementation="com.intellij.ml.llm.completion.intention.CompleteCodeWithAIActionPromoter" order="last"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Git4Idea">
+    <gitPostUpdateHandler implementation="com.intellij.ml.llm.vcs.summary.UpdateCommitsSummaryHandler"/>
+  </extensions>
+
+  <actions>
+    <group id="AIAssistant.Internal.Messages" internal="true">
+      <action internal="true" id="MockMessage" class="com.intellij.ml.llm.core.chat.actions.MockMessageAction"/>
+      <action internal="true" id="MalformedGrazieResponse" class="com.intellij.ml.llm.core.chat.actions.MalformedGrazieResponse"/>
+      <action internal="true" id="AssistantOverloadedResponse" class="com.intellij.ml.llm.core.chat.actions.AssistantOverloadedResponse"/>
+    </group>
+
+    <group id="AIAssistant.Internal" popup="true" internal="true">
+      <action internal="true" id="ConsoleChatAction" class="com.intellij.ml.llm.consoleChat.ConsoleChatAction"/>
+      <action internal="true" id="AIRecheckLicenseAction" class="com.intellij.ml.llm.core.license.AIRecheckLicenseAction"/>
+      <action internal="true" id="AIShowAgreementAction" class="com.intellij.ml.llm.core.actions.AIAssistantShowAgreementAction"/>
+      <action internal="true" id="AIAssistantShowAiEnabledAction" class="com.intellij.ml.llm.core.actions.AIAssistantShowAiEnabledAction"/>
+      <separator/>
+      <reference id="AIAssistant.Internal.Messages"/>
+    </group>
+
+    <group id="AIIntentionsActionGroup" class="com.intellij.ml.llm.intentions.editor.AIIntentionsActionGroup"
+           icon="com.intellij.ml.llm.MLLlmIcons.AiAssistantColored" searchable="false">
+      <add-to-group group-id="ShowIntentionsGroup" relative-to-action="ShowIntentionActions" anchor="after"/>
+      <add-to-group group-id="Floating.CodeToolbar" anchor="first"/>
+    </group>
+
+    <action id="RuntimeErrorExplanationAction"
+            class="com.intellij.ml.llm.runtimeErrorExplanation.RuntimeErrorExplanationAction"
+            icon="com.intellij.ml.llm.MLLlmIcons.AiAssistantColored">
+      <add-to-group group-id="ConsoleEditorPopupMenu" anchor="after" relative-to-action="$SearchWeb"/>
+    </action>
+
+    <action id="Vcs.LLMCommitMessageAction"
+            class="com.intellij.ml.llm.vcs.LLMCommitMessageAction"
+            icon="com.intellij.ml.llm.MLLlmIcons.AiAssistantColored">
+      <add-to-group group-id="Vcs.MessageActionGroup"/>
+    </action>
+
+    <action id="Vcs.LLMRewordCommitAction"
+            class="com.intellij.ml.llm.vcs.LLMRewordCommitAction"
+            icon="com.intellij.ml.llm.MLLlmIcons.AiAssistantColored">
+      <add-to-group group-id="Git.Reword.ToolbarActions"/>
+    </action>
+
+    <action id="Vcs.ExplainCommit"
+            class="com.intellij.ml.llm.vcs.LLMExplainCommitAction"
+            icon="com.intellij.ml.llm.MLLlmIcons.AiAssistantColored">
+      <add-to-group group-id="Vcs.Log.ContextMenu" relative-to-action="Vcs.ShowDiffWithLocal" anchor="after"/>
+    </action>
+
+    <action id="AIAssistant.Toolwindow.Scale" class="com.intellij.ml.llm.core.chat.actions.AIAssistantToolwindowScale">
+    </action>
+
+    <action id="AIAssistant.ToolWindow.Chat.Message.User.Message.Edit"
+            class="com.intellij.ml.llm.core.chat.actions.message.AIAssistantEditMessageAction"
+            icon="AllIcons.Actions.Edit"/>
+
+    <action id="AIAssistant.LLMSettings" class="com.intellij.ml.llm.core.actions.AIAssistantOpenSettingsAction"/>
+    <action id="AIAssistant.PluginsSettings" class="com.intellij.ml.llm.core.actions.AIAssistantOpenPluginsSettingsAction"/>
+
+    <group id="AIAssistant.ToolWindow.Chat.TitleActions">
+      <action id="AIAssistant.ToolWindow.AllChatsAction" class="com.intellij.ml.llm.core.chat.actions.toolbar.AIAssistantAllChatsAction"/>
+      <action id="AIAssistant.ToolWindow.NewChatAction" class="com.intellij.ml.llm.core.chat.actions.toolbar.AIAssistantNewChatAction"/>
+    </group>
+    <group id="AIAssistant.ToolWindow.List.ContextActions">
+      <action id="AIAssistant.ToolWindow.RemoveDialog"
+              icon="AllIcons.Vcs.Remove"
+              class="com.intellij.ml.llm.core.chat.actions.chat.AIAssistantListDeleteChat"/>
+    </group>
+    <group id="AIAssistant.ToolWindow.Chat.Message.User.ContextActions">
+      <reference id="AIAssistant.ToolWindow.Chat.Message.User.Message.Edit"/>
+      <action id="AIAssistant.PromptLibrary.SavePrompt"
+              class="com.intellij.ml.llm.core.chat.promptLibrary.entryPoints.AIAssistantPromptListSavePromptAction"/>
+    </group>
+
+    <action id="AIAssistant.Editor.GenerateCodeInplace"
+            class="com.intellij.ml.llm.core.chat.actions.editor.GenerateCodeInplaceAction">
+      <keyboard-shortcut first-keystroke="control BACK_SLASH" keymap="$default"/>
+      <keyboard-shortcut first-keystroke="control BACK_SLASH" keymap="NetBeans 6.5" remove="true"/>
+      <keyboard-shortcut first-keystroke="meta BACK_SLASH" keymap="macOS System Shortcuts" remove="true"/>
+    </action>
+
+    <action id="AIAssistant.Editor.CompleteCodeWithAI"
+            class="com.intellij.ml.llm.completion.intention.CompleteCodeWithAIAction">
+      <keyboard-shortcut first-keystroke="alt BACK_SLASH" keymap="$default"/>
+      <add-to-group group-id="CodeCompletionGroup" anchor="last" />
+    </action>
+
+    <group id="AIAssistant.ToolWindow.Snippet.Toolbar">
+      <action id="AIAssistant.ToolWindow.Snippet.ShowDiff"
+              class="com.intellij.ml.llm.core.chat.actions.codeSnippet.diff.AIAssistantShowDiffAction"/>
+      <action id="AIAssistant.ToolWindow.Snippet.CopyToClipboard"
+              icon="AllIcons.Actions.Copy"
+              class="com.intellij.ml.llm.core.chat.actions.codeSnippet.AIAssistantCopyToClipboardAction"/>
+      <action id="AIAssistant.ToolWindow.Snippet.InsertAtCaret"
+              icon="com.intellij.ml.llm.MLLlmIcons.SendToEditor"
+              class="com.intellij.ml.llm.core.chat.actions.codeSnippet.AIAssistantInsertAtCaretAction"/>
+    </group>
+
+    <group id="AIAssistant.ToolWindow.Message.Toolbar.Assistant">
+      <action id="AIAssistant.ToolWindow.Message.Like"
+              class="com.intellij.ml.llm.core.chat.actions.message.AIAssistantRateMessageAction$Like"/>
+      <action id="AIAssistant.ToolWindow.Message.Dislike"
+              class="com.intellij.ml.llm.core.chat.actions.message.AIAssistantRateMessageAction$Dislike"/>
+    </group>
+
+    <group id="AIAssistant.ToolWindow.Message.Toolbar.User">
+      <group popup="true" class="com.intellij.openapi.actionSystem.impl.MoreActionGroup">
+        <reference id="AIAssistant.ToolWindow.Chat.Message.User.Message.Edit"/>
+        <reference id="AIAssistant.PromptLibrary.SavePrompt"/>
+      </group>
+    </group>
+
+    <group id="AIAssistant.ToolWindow.Chat.SecondaryGearActions">
+      <action id="AIAssistant.ToolWindow.Chat.DeleteAll"
+              class="com.intellij.ml.llm.core.chat.actions.list.AIAssistantDeleteAllChats"/>
+      <action id="AIAssistant.ToolWindow.Chat.Rename"
+              class="com.intellij.ml.llm.core.chat.actions.chat.AIAssistantRenameChat"/>
+      <action id="AIAssistant.ToolWindow.Chat.Dump"
+              class="com.intellij.ml.llm.core.chat.actions.chat.AIAssistantDumpChat"/>
+      <action id="AIAssistant.ToolWindow.Chat.Delete"
+              class="com.intellij.ml.llm.core.chat.actions.chat.AIAssistantDeleteChat"/>
+      <separator/>
+      <reference id="AIAssistant.Toolwindow.Scale" />
+      <reference id="AIAssistant.LLMSettings"/>
+      <action id="AIAssistant.AIAssistantTurnOffAction" class="com.intellij.ml.llm.core.chat.actions.AIAssistantTurnOffAction"/>
+      <reference id="AIAssistant.PluginsSettings"/>
+      <action id="AIAssistant.LogOutFromAiPlatform" class="com.intellij.ml.llm.core.actions.AIAssistantLogoutFromAIPlatformAction"/>
+    </group>
+
+    <group id="AIAssistant.ToolWindow.Chat.Input.Left">
+      <group id="AIAssistant.ToolWindow.Chat.Input.PromptList" class="com.intellij.ml.llm.core.chat.promptLibrary.entryPoints.AIAssistantPromptListChatActionGroup" popup="true"/>
+      <reference id="AIAssistant.PromptLibrary.SavePrompt"/>
+    </group>
+
+    <group id="AIAssistant.ToolsDropdown">
+      <action id="AIAssistant.ToolWindow.ShowOrFocus"
+              class="com.intellij.ml.llm.core.chat.actions.AIAssistantShowChatAction"/>
+      <separator/>
+      <add-to-group group-id="ToolsMenu" anchor="first"/>
+    </group>
+
+    <group id="AIAssistant.StatusBar.Toolbar">
+      <group popup="true" class="com.intellij.openapi.actionSystem.impl.MoreActionGroup">
+        <reference id="AIAssistant.LLMSettings"/>
+        <reference id="AIAssistant.PluginsSettings"/>
+      </group>
+    </group>
+
+    <action id="AIAssistant.GenerateFileCommitSummary" class="com.intellij.ml.llm.vcs.summary.FileCommitSummaryAction"
+            icon="com.intellij.ml.llm.MLLlmIcons.AiAssistantColored">
+      <add-to-group group-id="Vcs.Operations.Popup" anchor="after" relative-to-action="Vcs.Operations.Popup.Vcs.Providers"/>
+      <add-to-group group-id="Git.FileActions" anchor="last"/>
+    </action>
+
+    <action id="AIAssistant.CodeGeneration.Actions.AcceptAllChanges" class="com.intellij.ml.llm.core.diff.actions.AIAcceptAllChangesAction"/>
+    <action id="AIAssistant.CodeGeneration.Actions.Specify" class="com.intellij.ml.llm.core.diff.actions.AISpecifyCodeGenerationAction" use-shortcut-of="AIAssistant.Editor.GenerateCodeInplace"/>
+    <action id="AIAssistant.CodeGeneration.Actions.Regenerate" class="com.intellij.ml.llm.core.diff.actions.AIRegenerateCodeAction" icon="com.intellij.icons.ExpUiIcons.Run.Restart"/>
+    <action id="AIAssistant.CodeGeneration.Actions.Stop" class="com.intellij.ml.llm.core.diff.actions.AIStopCodeGenerationAction" icon="com.intellij.icons.ExpUiIcons.Run.Stop"/>
+    <action id="AIAssistant.CodeGeneration.Actions.Drop" class="com.intellij.ml.llm.core.diff.actions.AIDropCodeGenerationAction" icon="com.intellij.icons.ExpUiIcons.General.Delete"/>
+
+    <group id="AIAssistant.CodeGeneration.Actions.ShowIntentionActions"
+           icon="AllIcons.Actions.IntentionBulb"
+           popup="true"
+           use-shortcut-of="ShowIntentionActions"
+           class="com.intellij.ml.llm.core.codeGeneration.actions.AICodeGenerationActionGroup">
+      <reference id="AIAssistant.CodeGeneration.Actions.AcceptAllChanges"/>
+      <reference id="AIAssistant.CodeGeneration.Actions.Specify"/>
+      <reference id="AIAssistant.CodeGeneration.Actions.Regenerate"/>
+      <reference id="AIAssistant.CodeGeneration.Actions.Stop"/>
+      <reference id="AIAssistant.CodeGeneration.Actions.Drop"/>
+    </group>
+
+    <action id="PromptLog.CleanUp" class="com.intellij.ml.llm.core.promptlog.CleanupPromptLogAction"/>
+    <action id="PromptLog.CleanUpAll" class="com.intellij.ml.llm.core.promptlog.CleanupAllPromptLogAction"/>
+    <action id="PromptLog.OpenLog" class="com.intellij.ml.llm.core.promptlog.OpenPromptLogAction"/>
+
+    <action id="llm.inline.completion.OpenLog" class="com.intellij.ml.llm.completion.inline.InlineCompletionLogOpenAction" internal="true"/>
+    <action id="llm.inline.completion.MockResponseSet" class="com.intellij.ml.llm.completion.inline.requests.LLMInlineCompletionProviderMocking$LLMInlineCompletionMockResponseSetAction" internal="true"/>
+    <action id="llm.inline.completion.MockResponseReset" class="com.intellij.ml.llm.completion.inline.requests.LLMInlineCompletionProviderMocking$LLMInlineCompletionMockResponseResetAction" internal="true"/>
+
+    <action id="AIAssistantUITestAction" internal="true" class="com.intellij.ml.llm.core.chat.ui.AIAssistantUITestAction"/>
+  </actions>
+
+  <projectListeners>
+    <listener class="com.intellij.ml.llm.completion.inline.LLMInlineCompletionStats$Listener"
+              topic="com.intellij.ml.llm.completion.inline.LLMInlineCompletionListener"/>
+    <listener class="com.intellij.ml.llm.completion.inline.LLMInlineCompletionStatsFusListener"
+              topic="com.intellij.ml.llm.completion.inline.LLMInlineCompletionListener"/>
+    <listener class="com.intellij.ml.llm.core.chat.AIAssistantToolWindowFocusActivator"
+              topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
+    <listener topic="com.intellij.ml.llm.core.settings.LLMProjectSettingsListener"
+              class="com.intellij.ml.llm.core.UserSettingKillSwitch$ProjectSettingsListener"/>
+    <listener topic="com.intellij.ml.llm.core.license.agreement.AIAgreementListener"
+              class="com.intellij.ml.llm.core.license.agreement.AIAgreementKillSwitch$AgreementListener"/>
+  </projectListeners>
+</idea-plugin>

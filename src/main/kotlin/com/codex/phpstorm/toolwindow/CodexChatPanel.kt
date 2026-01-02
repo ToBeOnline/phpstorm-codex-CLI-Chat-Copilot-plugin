@@ -15,6 +15,7 @@ import com.codex.phpstorm.settings.CodexSettingsState
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.SelectionModel
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -46,6 +47,7 @@ class CodexChatPanel(private val project: Project) {
 
     private val transcript = JTextPane()
     private val inputArea = JBTextArea(4, 80)
+    private val backendComboBox = ComboBox(CodexBackend.entries.toTypedArray())
     private val selectionToggle = JBCheckBox("Include editor selection", true)
     private val autoApproveToggle = JBCheckBox("Auto-approve actions (this session)", false)
     private val systemPromptField = JBTextField()
@@ -80,6 +82,15 @@ class CodexChatPanel(private val project: Project) {
         transcript.margin = JBInsets(8, 8, 8, 8)
         val transcriptScroll = JBScrollPane(transcript)
 
+        val initialBackend = runCatching { CodexBackend.valueOf(CodexSettingsState.getInstance().state.backend) }
+            .getOrDefault(CodexBackend.OPENAI_API)
+        backendComboBox.selectedItem = initialBackend
+        backendComboBox.addActionListener {
+            val selected = backendComboBox.selectedItem as? CodexBackend ?: CodexBackend.OPENAI_API
+            CodexSettingsState.getInstance().state.backend = selected.name
+            updateBackendControls(selected)
+        }
+
         inputArea.lineWrap = true
         inputArea.wrapStyleWord = true
         inputArea.emptyText.text = "Ask Codex anything about your project"
@@ -93,9 +104,12 @@ class CodexChatPanel(private val project: Project) {
         sendButton.addActionListener { sendFromUi() }
         clearButton.addActionListener { clearConversation() }
         autoApproveToggle.addActionListener { autoApproveActions = autoApproveToggle.isSelected }
+        updateBackendControls(initialBackend)
 
         val controls = JPanel(VerticalLayout(4)).apply {
             border = JBUI.Borders.empty(8)
+            add(JLabel("Backend"))
+            add(backendComboBox)
             add(JLabel("System prompt"))
             add(systemPromptField)
             add(selectionToggle)
@@ -171,7 +185,7 @@ class CodexChatPanel(private val project: Project) {
         appendMessage("You", finalPrompt)
         ensureSystemPrompt()
         val settings = CodexSettingsState.getInstance().state
-        val backend = runCatching { CodexBackend.valueOf(settings.backend) }.getOrDefault(CodexBackend.OPENAI_API)
+        val backend = currentBackend()
         val toolsPreview = if (backend == CodexBackend.OPENAI_API) CodexToolCatalog.toolsFor(settings) else emptyList()
         ensureAgentInstructions(backend == CodexBackend.OPENAI_API && toolsPreview.isNotEmpty())
         conversation.add(ChatCompletionMessage(role = "user", content = finalPrompt))
@@ -182,8 +196,6 @@ class CodexChatPanel(private val project: Project) {
             private var assistantReply: String? = null
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = true
-                val settings = CodexSettingsState.getInstance().state
-                val backend = runCatching { CodexBackend.valueOf(settings.backend) }.getOrDefault(CodexBackend.OPENAI_API)
                 assistantReply = when (backend) {
                     CodexBackend.CODEX_CLI -> {
                         val result = CodexCliClient.getInstance(project).chat(conversation.toList())
@@ -192,7 +204,8 @@ class CodexChatPanel(private val project: Project) {
                         reply
                     }
                     CodexBackend.OPENAI_API -> {
-                        val tools = CodexToolCatalog.toolsFor(settings)
+                        val currentSettings = CodexSettingsState.getInstance().state
+                        val tools = CodexToolCatalog.toolsFor(currentSettings)
                         if (tools.isEmpty()) {
                             val assistant = CodexClient.getInstance(project).createChatCompletion(conversation.toList(), null)
                                 .getOrElse { throw it }
@@ -217,6 +230,21 @@ class CodexChatPanel(private val project: Project) {
                 resetSendButton()
             }
         })
+    }
+
+    private fun currentBackend(): CodexBackend {
+        val raw = CodexSettingsState.getInstance().state.backend
+        return runCatching { CodexBackend.valueOf(raw) }.getOrDefault(CodexBackend.OPENAI_API)
+    }
+
+    private fun updateBackendControls(backend: CodexBackend) {
+        val api = backend == CodexBackend.OPENAI_API
+        autoApproveToggle.isEnabled = api
+        if (!api) {
+            autoApproveActions = false
+            autoApproveToggle.isSelected = false
+            ensureAgentInstructions(false)
+        }
     }
 
     private fun runAgentLoop(tools: List<ToolDefinition>, indicator: ProgressIndicator): String {
