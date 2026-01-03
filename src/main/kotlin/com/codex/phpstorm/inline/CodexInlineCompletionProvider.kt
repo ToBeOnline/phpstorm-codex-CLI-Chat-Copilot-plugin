@@ -110,7 +110,8 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
             return InlineCompletionSuggestion.empty()
         }
 
-        val suggestion = CodexInlineCompletionUtils.sanitizeSuggestion(rawSuggestion)
+        var suggestion = CodexInlineCompletionUtils.sanitizeSuggestion(rawSuggestion)
+        suggestion = CodexInlineCompletionUtils.stripLeadingEmptyParensIfPrefixEndsWithParen(prepared.prefix, suggestion)
         if (suggestion.isBlank()) return InlineCompletionSuggestion.empty()
         if (CodexInlineCompletionUtils.isDuplicateOfSuffix(suggestion, prepared.suffix) ||
             CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prepared.prefix)

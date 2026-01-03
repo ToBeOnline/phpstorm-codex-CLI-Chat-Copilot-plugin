@@ -71,6 +71,17 @@ object CodexInlineCompletionUtils {
         return text
     }
 
+    fun stripLeadingEmptyParensIfPrefixEndsWithParen(prefix: String, suggestion: String): String {
+        val prefixTrimmed = prefix.trimEnd()
+        if (!prefixTrimmed.endsWith(")")) return suggestion
+
+        val trimmedSuggestion = suggestion.trimStart()
+        if (!trimmedSuggestion.startsWith("()")) return suggestion
+
+        val stripped = trimmedSuggestion.removePrefix("()").trimStart()
+        return if (stripped.isEmpty()) "" else stripped
+    }
+
     fun isDuplicateOfSuffix(suggestion: String, suffix: String): Boolean {
         val trimmedSuggestion = suggestion.trimStart()
         if (trimmedSuggestion.isEmpty()) return false

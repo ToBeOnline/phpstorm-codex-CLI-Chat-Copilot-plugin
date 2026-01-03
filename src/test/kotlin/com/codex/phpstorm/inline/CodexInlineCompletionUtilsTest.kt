@@ -70,4 +70,12 @@ class CodexInlineCompletionUtilsTest {
         val suggestion = "() {\n    // body\n}"
         assertTrue(CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prefix))
     }
+
+    @Test
+    fun `leading empty parens are stripped when prefix ends with paren`() {
+        val prefix = "public function render_admin_page()"
+        val suggestion = "() {\n    echo 'hi';\n}"
+        val stripped = CodexInlineCompletionUtils.stripLeadingEmptyParensIfPrefixEndsWithParen(prefix, suggestion)
+        assertEquals("{\n    echo 'hi';\n}", stripped)
+    }
 }
