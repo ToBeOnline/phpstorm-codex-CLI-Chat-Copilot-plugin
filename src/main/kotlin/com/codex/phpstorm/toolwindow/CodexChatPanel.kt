@@ -101,6 +101,15 @@ class CodexChatPanel(private val project: Project) {
             }
         })
 
+        systemPromptField.toolTipText = """
+            System prompt defines the assistant's role and style.
+            Tips:
+            - Be explicit about tone and format (e.g., concise code, no markdown).
+            - Set language/framework context (e.g., “use PHP/WordPress”).
+            - Keep temperature low (0.1–0.2) for predictable answers.
+            - Inline completions also use this prompt; prefer concise, code-only guidance.
+        """.trimIndent()
+
         sendButton.addActionListener { sendFromUi() }
         clearButton.addActionListener { clearConversation() }
         autoApproveToggle.addActionListener { autoApproveActions = autoApproveToggle.isSelected }
