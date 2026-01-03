@@ -32,12 +32,10 @@ jobs:
         with:
           arguments: test buildPlugin
 
-      - name: Run Plugin Verifier (PhpStorm 2023.3)
+      - name: Run Plugin Verifier (latest PhpStorm)
         uses: gradle/actions/setup-gradle@v3
         with:
-          arguments: runPluginVerifier
-        env:
-          IDE_VERSIONS: PS-2023.3
+          arguments: runPluginVerifier -PpluginVerifierIdeVersions=PS-LATEST-EAP-SNAPSHOT
 
       - name: Upload plugin artifact
         if: always()
