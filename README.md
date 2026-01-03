@@ -2,6 +2,9 @@
 
 PhpStorm plugin that brings Codex's CLI, chat workflow, and Copilot-style inline completions into the IDE. It mirrors the Visual Studio extension by adding a docked chat panel, quick actions for sending selections, an embedded Codex CLI terminal, and configurable backend settings.
 
+## Licentie
+Deze plugin is gelicentieerd onder de Apache License, Version 2.0. Zie het LICENSE-bestand voor de volledige tekst.
+
 ## Features
 - Tool window (`Codex Chat`) that keeps a running conversation with the assistant.
 - Tool window (`Codex CLI`) that runs the interactive `codex` CLI inside an embedded terminal.
