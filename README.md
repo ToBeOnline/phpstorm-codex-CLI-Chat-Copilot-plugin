@@ -5,6 +5,9 @@ PhpStorm plugin that brings Codex's CLI, chat workflow, and Copilot-style inline
 ## Licentie
 Deze plugin is gelicentieerd onder de Apache License, Version 2.0. Zie het LICENSE-bestand voor de volledige tekst.
 
+## Disclaimer
+Deze plugin is niet gelieerd aan of ondersteund door JetBrains of OpenAI. Namen en merken worden alleen ter identificatie gebruikt.
+
 ## Features
 - Tool window (`Codex Chat`) that keeps a running conversation with the assistant.
 - Tool window (`Codex CLI`) that runs the interactive `codex` CLI inside an embedded terminal.
