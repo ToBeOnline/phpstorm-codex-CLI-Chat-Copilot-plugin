@@ -29,10 +29,18 @@ class CodexSettingsConfigurable : Configurable {
 
     private val apiUrlField = JBTextField()
     private val apiKeyField = JPasswordField()
-    private val openAiModelComboBox = ComboBox<String>()
-    private val codexCliModelComboBox = ComboBox<String>()
-    private val openAiInlineModelComboBox = ComboBox<String>()
-    private val codexCliInlineModelComboBox = ComboBox<String>()
+    private val openAiModelComboBox = ComboBox<String>().apply {
+        toolTipText = "Chat: prefer gpt-4o or gpt-4.1 for quality; gpt-4o-mini for speed/cost."
+    }
+    private val codexCliModelComboBox = ComboBox<String>().apply {
+        toolTipText = "CLI (Codex): choose your best local/enterprise Codex model; fall back to gpt-4o-mini."
+    }
+    private val openAiInlineModelComboBox = ComboBox<String>().apply {
+        toolTipText = "Inline completions: prefer gpt-4o-mini (or gpt-4.1-mini) for fast, concise ghost text."
+    }
+    private val codexCliInlineModelComboBox = ComboBox<String>().apply {
+        toolTipText = "Inline (Codex CLI): pick the fastest/most concise Codex model you have."
+    }
     private val openAiInlineTemperatureSlider = JSlider(0, 100, 10)
     private val codexCliInlineTemperatureSlider = JSlider(0, 100, 10)
     private val openAiInlineTemperatureValueLabel = JBLabel()
