@@ -119,7 +119,9 @@ class CodexChatPanel(private val project: Project) {
             border = JBUI.Borders.empty(8)
             add(JLabel("Backend"))
             add(backendComboBox)
-            add(JLabel("System prompt"))
+            add(JLabel("System prompt").apply {
+                toolTipText = systemPromptField.toolTipText
+            })
             add(systemPromptField)
             add(selectionToggle)
             add(autoApproveToggle)
