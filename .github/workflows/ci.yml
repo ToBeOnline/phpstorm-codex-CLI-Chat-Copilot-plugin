@@ -27,15 +27,14 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v3
 
-      - name: Build and test
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-        with:
-          arguments: test buildPlugin
+
+      - name: Build and test
+        run: ./gradlew test buildPlugin
 
       - name: Run Plugin Verifier (latest stable PhpStorm)
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          arguments: runPluginVerifier -PpluginVerifierIdeVersions=PS-LATEST-RELEASE
+        run: ./gradlew runPluginVerifier -PpluginVerifierIdeVersions=PS-LATEST-RELEASE
 
       - name: Upload plugin artifact
         if: always()
