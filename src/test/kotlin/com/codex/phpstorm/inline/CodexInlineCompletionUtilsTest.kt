@@ -63,4 +63,11 @@ class CodexInlineCompletionUtilsTest {
         val suggestion = "function render_admin_page() {\n    echo 'hi';\n}"
         assertTrue(CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prefix))
     }
+
+    @Test
+    fun `double parentheses after signature are filtered`() {
+        val prefix = "public function render_admin_page()"
+        val suggestion = "() {\n    // body\n}"
+        assertTrue(CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prefix))
+    }
 }

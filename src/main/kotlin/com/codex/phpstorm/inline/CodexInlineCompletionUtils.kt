@@ -114,6 +114,11 @@ object CodexInlineCompletionUtils {
             return true
         }
 
+        val lastPrefix = recentCanonical.lastOrNull().orEmpty()
+        if (lastPrefix.endsWith(")") && (canonSuggestion == "()" || canonSuggestion.startsWith("()"))) {
+            return true
+        }
+
         return recentCanonical.any { it == canonSuggestion }
     }
 
