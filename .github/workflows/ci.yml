@@ -14,6 +14,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
+    env:
+      GRADLE_USER_HOME: ${{ runner.temp }}/gradle
+      PLUGIN_VERIFIER_HOME_DIR: ${{ runner.temp }}/pluginVerifier
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
