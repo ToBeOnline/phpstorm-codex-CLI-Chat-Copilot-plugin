@@ -20,6 +20,7 @@ class CodexSettingsState : PersistentStateComponent<CodexSettingsState.State> {
         var codexCliPath: String = "codex",
         var codexCliExtraArgs: String = "",
         var codexCliModel: String = "",
+        var codexCliTerminalModel: String = "",
         var codexCliTimeoutMs: Int = 600000,
         var agentModeEnabled: Boolean = false,
         var allowFileRead: Boolean = true,

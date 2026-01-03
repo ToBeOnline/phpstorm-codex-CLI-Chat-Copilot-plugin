@@ -35,6 +35,10 @@ class CodexSettingsConfigurable : Configurable {
     private val codexCliModelComboBox = ComboBox<String>().apply {
         toolTipText = "CLI (Codex): choose your best local/enterprise Codex model; fall back to gpt-4o-mini."
     }
+    private val codexCliTerminalModelComboBox = ComboBox<String>().apply {
+        toolTipText = "Default model for Codex CLI terminal (can be overridden per session in the terminal UI)."
+        isEditable = true
+    }
     private val openAiInlineModelComboBox = ComboBox<String>().apply {
         toolTipText = "Inline completions: prefer gpt-4o-mini (or gpt-4.1-mini) for fast, concise ghost text."
     }
@@ -151,6 +155,7 @@ class CodexSettingsConfigurable : Configurable {
             .addLabeledComponent("System prompt", systemPromptArea, 1, false)
             .addLabeledComponent("Codex CLI path", codexCliPathField, 1, false)
             .addLabeledComponent("Codex CLI extra args", codexCliExtraArgsField, 1, false)
+            .addLabeledComponent("Codex CLI default model (terminal)", codexCliTerminalModelComboBox, 1, false)
             .addComponent(agentModeEnabled, 1)
             .addComponent(allowFileRead, 1)
             .addComponent(allowFileWrite, 1)
@@ -171,6 +176,7 @@ class CodexSettingsConfigurable : Configurable {
             String(apiKeyField.password) != s.apiKey ||
             currentOpenAiModel() != s.model ||
             currentCodexCliModel() != s.codexCliModel ||
+            currentCodexCliTerminalModel() != s.codexCliTerminalModel ||
             sliderToTemperature(temperatureSlider.value) != s.temperature ||
             systemPromptArea.text != s.systemPrompt ||
             codexCliPathField.text != s.codexCliPath ||
@@ -205,6 +211,7 @@ class CodexSettingsConfigurable : Configurable {
                 codexCliExtraArgs = codexCliExtraArgsField.text.trim(),
                 codexCliTimeoutMs = state.state.codexCliTimeoutMs,
                 codexCliModel = currentCodexCliModel(),
+                codexCliTerminalModel = currentCodexCliTerminalModel(),
                 agentModeEnabled = agentModeEnabled.isSelected,
                 allowFileRead = allowFileRead.isSelected,
                 allowFileWrite = allowFileWrite.isSelected,
@@ -235,6 +242,7 @@ class CodexSettingsConfigurable : Configurable {
         codexCliExtraArgsField.text = s.codexCliExtraArgs
         openAiModelComboBox.selectedItem = s.model
         codexCliModelComboBox.selectedItem = s.codexCliModel
+        codexCliTerminalModelComboBox.selectedItem = s.codexCliTerminalModel
         openAiInlineModelComboBox.selectedItem = s.inlineCompletionOpenAiModel.ifBlank { INLINE_MODEL_DEFAULT_SENTINEL }
         codexCliInlineModelComboBox.selectedItem = s.inlineCompletionCodexCliModel.ifBlank { INLINE_MODEL_DEFAULT_SENTINEL }
         openAiInlineTemperatureSlider.value = temperatureToSlider(s.inlineCompletionOpenAiTemperature)
@@ -352,6 +360,10 @@ class CodexSettingsConfigurable : Configurable {
     private fun currentCodexCliModel(): String =
         (codexCliModelComboBox.editor.item as? String ?: codexCliModelComboBox.selectedItem as? String).orEmpty().trim()
 
+    private fun currentCodexCliTerminalModel(): String =
+        (codexCliTerminalModelComboBox.editor.item as? String
+            ?: codexCliTerminalModelComboBox.selectedItem as? String).orEmpty().trim()
+
     private fun currentOpenAiInlineModelRaw(): String =
         (openAiInlineModelComboBox.editor.item as? String ?: openAiInlineModelComboBox.selectedItem as? String).orEmpty().trim()
 
@@ -386,6 +398,10 @@ class CodexSettingsConfigurable : Configurable {
         val cliSelected = currentCodexCliModel()
         codexCliModelComboBox.model = DefaultComboBoxModel(cliModels.toTypedArray())
         if (cliSelected.isNotEmpty()) codexCliModelComboBox.selectedItem = cliSelected
+
+        val cliTerminalSelected = currentCodexCliTerminalModel()
+        codexCliTerminalModelComboBox.model = DefaultComboBoxModel(cliModels.toTypedArray())
+        if (cliTerminalSelected.isNotEmpty()) codexCliTerminalModelComboBox.selectedItem = cliTerminalSelected
 
         val openAiInlineSelected = currentOpenAiInlineModelRaw()
         openAiInlineModelComboBox.model =
