@@ -1,10 +1,10 @@
 <idea-plugin>
   <id>com.codex.phpstorm</id>
-  <name>Codex Chat</name>
+  <name>Codex CLI/Chat/Copilot</name>
   <vendor email="support@codex.example" url="https://codex.codes">Codex</vendor>
 
   <description><![CDATA[
-Codex chat integration for PhpStorm. Provides a docked chat tool window, context-aware prompts, and settings for connecting to your Codex backend.
+Codex CLI/Chat/Copilot integration for PhpStorm. Provides Codex CLI access, chat, and inline Copilot-style completions with context-aware prompts and settings for your Codex backend.
   ]]></description>
 
   <depends>com.intellij.modules.platform</depends>
