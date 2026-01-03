@@ -48,4 +48,12 @@ class CodexInlineCompletionUtilsTest {
         assertTrue(CodexInlineCompletionUtils.isEchoingPrefix("if (!defined('ABSPATH')) {\n// body", prefix))
         assertFalse(CodexInlineCompletionUtils.isEchoingPrefix("public function other() {}", prefix))
     }
+
+    @Test
+    fun `canonical comparison ignores whitespace differences`() {
+        val suffix = "   public   function   register_menu() {\n body }\n"
+        assertTrue(CodexInlineCompletionUtils.isDuplicateOfSuffix("publicfunction register_menu() {", suffix))
+        val prefix = "foo\npublic   function   register_menu() {\n"
+        assertTrue(CodexInlineCompletionUtils.isEchoingPrefix("publicfunction register_menu() {", prefix))
+    }
 }

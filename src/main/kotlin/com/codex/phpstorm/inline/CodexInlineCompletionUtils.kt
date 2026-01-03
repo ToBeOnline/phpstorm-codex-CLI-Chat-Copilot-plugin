@@ -82,11 +82,14 @@ object CodexInlineCompletionUtils {
 
         val firstLine = trimmedSuggestion.lineSequence().firstOrNull()?.trim().orEmpty()
         if (firstLine.isEmpty()) return false
+        val canonSuggestion = canonicalLine(firstLine)
 
         return trimmedSuffix
             .lineSequence()
             .take(50)
-            .any { it.trim() == firstLine }
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .any { canonicalLine(it) == canonSuggestion }
     }
 
     fun isEchoingPrefix(suggestion: String, prefix: String): Boolean {
@@ -95,6 +98,7 @@ object CodexInlineCompletionUtils {
 
         val firstLine = trimmedSuggestion.lineSequence().firstOrNull()?.trim().orEmpty()
         if (firstLine.isEmpty()) return false
+        val canonSuggestion = canonicalLine(firstLine)
 
         val recentPrefixLines = prefix
             .lineSequence()
@@ -103,8 +107,11 @@ object CodexInlineCompletionUtils {
             .toList()
             .takeLast(5)
 
-        return recentPrefixLines.any { firstLine == it }
+        return recentPrefixLines.any { canonicalLine(it) == canonSuggestion }
     }
+
+    private fun canonicalLine(line: String): String =
+        line.filter { !it.isWhitespace() }.lowercase()
 
     private fun stripCommonPrefixes(text: String): String {
         val trimmed = text.trimStart()
