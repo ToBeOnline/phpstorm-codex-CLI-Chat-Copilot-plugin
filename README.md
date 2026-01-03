@@ -1,6 +1,6 @@
-# Codex Chat for PhpStorm
+# Codex CLI/Chat/Copilot for PhpStorm
 
-PhpStorm plugin that brings Codex's chat workflow into the IDE. It mirrors the Visual Studio extension by adding a docked chat panel, quick actions for sending selections, and configurable backend settings.
+PhpStorm plugin that brings Codex's CLI, chat workflow, and Copilot-style inline completions into the IDE. It mirrors the Visual Studio extension by adding a docked chat panel, quick actions for sending selections, an embedded Codex CLI terminal, and configurable backend settings.
 
 ## Features
 - Tool window (`Codex Chat`) that keeps a running conversation with the assistant.

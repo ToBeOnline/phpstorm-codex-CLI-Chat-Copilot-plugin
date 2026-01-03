@@ -1,1 +1,1 @@
-rootProject.name = "phpstorm-codex-plugin"
+rootProject.name = "phpstorm-codex-CLI-Chat-Copilot-plugin"
