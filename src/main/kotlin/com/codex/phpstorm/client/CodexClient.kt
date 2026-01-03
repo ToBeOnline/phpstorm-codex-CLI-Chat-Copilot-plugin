@@ -15,7 +15,10 @@ import java.net.HttpURLConnection
 @Service(Service.Level.PROJECT)
 class CodexClient(private val project: Project) {
 
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
     private val logger = Logger.getInstance(CodexClient::class.java)
 
     fun createChatCompletion(
