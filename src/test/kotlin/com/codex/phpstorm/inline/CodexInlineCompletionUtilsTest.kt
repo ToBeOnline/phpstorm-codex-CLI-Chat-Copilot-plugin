@@ -56,4 +56,11 @@ class CodexInlineCompletionUtilsTest {
         val prefix = "foo\npublic   function   register_menu() {\n"
         assertTrue(CodexInlineCompletionUtils.isEchoingPrefix("publicfunction register_menu() {", prefix))
     }
+
+    @Test
+    fun `function keyword continuation is filtered`() {
+        val prefix = "public function\n"
+        val suggestion = "function render_admin_page() {\n    echo 'hi';\n}"
+        assertTrue(CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prefix))
+    }
 }

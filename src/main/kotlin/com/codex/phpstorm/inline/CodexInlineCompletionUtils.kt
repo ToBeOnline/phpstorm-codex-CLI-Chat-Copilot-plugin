@@ -99,6 +99,7 @@ object CodexInlineCompletionUtils {
         val firstLine = trimmedSuggestion.lineSequence().firstOrNull()?.trim().orEmpty()
         if (firstLine.isEmpty()) return false
         val canonSuggestion = canonicalLine(firstLine)
+        val startsWithFunction = canonSuggestion.startsWith("function")
 
         val recentPrefixLines = prefix
             .lineSequence()
@@ -107,7 +108,13 @@ object CodexInlineCompletionUtils {
             .toList()
             .takeLast(5)
 
-        return recentPrefixLines.any { canonicalLine(it) == canonSuggestion }
+        val recentCanonical = recentPrefixLines.map(::canonicalLine)
+
+        if (startsWithFunction && recentCanonical.any { it.endsWith("function") || it.endsWith("publicfunction") || it.endsWith("protectedfunction") || it.endsWith("privatefunction") }) {
+            return true
+        }
+
+        return recentCanonical.any { it == canonSuggestion }
     }
 
     private fun canonicalLine(line: String): String =
