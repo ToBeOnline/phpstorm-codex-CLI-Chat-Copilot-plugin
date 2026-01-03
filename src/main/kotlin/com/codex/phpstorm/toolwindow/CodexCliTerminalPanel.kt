@@ -79,12 +79,26 @@ class CodexCliTerminalPanel(private val project: Project) : Disposable {
 
         val terminalManager = TerminalToolWindowManager.getInstance(project)
         val runner = terminalManager.getTerminalRunner()
+            ?: run {
+                val label = JBLabel("Terminal runner unavailable.")
+                container.add(label, BorderLayout.CENTER)
+                container.revalidate()
+                container.repaint()
+                return
+            }
         val options = ShellStartupOptions.Builder()
             .workingDirectory(basePath)
             .shellCommand(args)
             .build()
 
-        val widget = runner.startShellTerminalWidget(this, options, true)
+        val widget = runCatching { runner.startShellTerminalWidget(this, options, true) }.getOrNull()
+            ?: run {
+                val label = JBLabel("Could not start Codex CLI terminal.")
+                container.add(label, BorderLayout.CENTER)
+                container.revalidate()
+                container.repaint()
+                return
+            }
         terminalWidget = widget
         terminalComponent = widget.component
         container.add(widget.component, BorderLayout.CENTER)
