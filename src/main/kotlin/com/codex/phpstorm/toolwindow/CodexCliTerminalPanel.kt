@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.terminal.ui.TerminalWidget
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
-import com.intellij.openapi.ui.ComboBox
 import org.jetbrains.plugins.terminal.ShellStartupOptions
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import java.awt.AWTEvent
@@ -15,18 +14,17 @@ import java.awt.BorderLayout
 import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
 import java.io.IOException
-import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
 class CodexCliTerminalPanel(private val project: Project) : Disposable {
 
-    val component: JComponent = buildUi()
+    private val container = JPanel(BorderLayout())
+    val component: JComponent by lazy { buildUi() }
     private var terminalWidget: TerminalWidget? = null
     private var terminalComponent: JComponent? = null
-    private val container = JPanel(BorderLayout())
-    private val modelField = ComboBox<String>()
+    private var centerComponent: JComponent? = null
 
     private fun buildUi(): JComponent {
         val basePath = project.basePath
@@ -37,30 +35,14 @@ class CodexCliTerminalPanel(private val project: Project) : Disposable {
             }
         }
 
-        val settings = CodexSettingsState.getInstance().state
-        val defaultModel = settings.codexCliTerminalModel.trim().ifEmpty { settings.codexCliModel.trim() }
-        modelField.isEditable = true
-        modelField.toolTipText = "Default model for Codex CLI terminal. Override per session here."
-        modelField.selectedItem = defaultModel
-
-        val restartButton = JButton("Restart with model")
-        restartButton.addActionListener { restartTerminal(basePath) }
-
-        val topBar = JPanel(BorderLayout(8, 0)).apply {
-            border = JBUI.Borders.empty(4, 8)
-            add(JBLabel("Model"), BorderLayout.WEST)
-            add(modelField, BorderLayout.CENTER)
-            add(restartButton, BorderLayout.EAST)
-        }
-
         container.border = JBUI.Borders.empty()
-        container.add(topBar, BorderLayout.NORTH)
+        setCenter(statusLabel("Starting Codex CLI..."))
         restartTerminal(basePath)
         return container
     }
 
     private fun restartTerminal(basePath: String) {
-        terminalComponent?.let { container.remove(it) }
+        setCenter(statusLabel("Starting Codex CLI..."))
         terminalWidget = null
         terminalComponent = null
 
@@ -68,7 +50,7 @@ class CodexCliTerminalPanel(private val project: Project) : Disposable {
         val exe = settings.codexCliPath.ifBlank { "codex" }
         val args = mutableListOf<String>()
         args += exe
-        val model = (modelField.editor.item as? String ?: modelField.selectedItem as? String).orEmpty().trim()
+        val model = settings.codexCliTerminalModel.trim().ifEmpty { settings.codexCliModel.trim() }
         if (model.isNotEmpty()) {
             args += listOf("-m", model)
         }
@@ -77,13 +59,10 @@ class CodexCliTerminalPanel(private val project: Project) : Disposable {
             args += extraArgs.split(" ").filter { it.isNotBlank() }
         }
 
-        val terminalManager = TerminalToolWindowManager.getInstance(project)
-        val runner = terminalManager.getTerminalRunner()
+        val terminalManager = runCatching { TerminalToolWindowManager.getInstance(project) }.getOrNull()
+        val runner = terminalManager?.getTerminalRunner()
             ?: run {
-                val label = JBLabel("Terminal runner unavailable.")
-                container.add(label, BorderLayout.CENTER)
-                container.revalidate()
-                container.repaint()
+                setCenter(statusLabel("Terminal runner unavailable."))
                 return
             }
         val options = ShellStartupOptions.Builder()
@@ -91,21 +70,28 @@ class CodexCliTerminalPanel(private val project: Project) : Disposable {
             .shellCommand(args)
             .build()
 
-        val widget = runCatching { runner.startShellTerminalWidget(this, options, true) }.getOrNull()
-            ?: run {
-                val label = JBLabel("Could not start Codex CLI terminal.")
-                container.add(label, BorderLayout.CENTER)
-                container.revalidate()
-                container.repaint()
-                return
+        val widget = runCatching { runner.startShellTerminalWidget(this, options, true) }
+            .onFailure { throwable ->
+                val message = throwable.message?.takeIf { it.isNotBlank() } ?: "unknown error"
+                setCenter(statusLabel("Could not start Codex CLI terminal: $message"))
             }
+            .getOrNull() ?: return
         terminalWidget = widget
         terminalComponent = widget.component
-        container.add(widget.component, BorderLayout.CENTER)
-        container.revalidate()
-        container.repaint()
+        setCenter(widget.component)
         installEscapePassthrough()
     }
+
+    private fun setCenter(component: JComponent) {
+        centerComponent?.let { container.remove(it) }
+        centerComponent = component
+        container.add(component, BorderLayout.CENTER)
+        container.revalidate()
+        container.repaint()
+    }
+
+    private fun statusLabel(text: String): JBLabel =
+        JBLabel(text).apply { border = JBUI.Borders.empty(8) }
 
     private fun installEscapePassthrough() {
         val widget = terminalWidget ?: return

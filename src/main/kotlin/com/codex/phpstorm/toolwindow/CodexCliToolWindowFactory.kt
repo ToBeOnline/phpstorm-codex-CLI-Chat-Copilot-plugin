@@ -9,18 +9,36 @@ import com.intellij.openapi.wm.safeToolWindowPaneId
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx
 import com.intellij.openapi.wm.impl.WindowInfoImpl
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.diagnostic.logger
+import java.awt.BorderLayout
 import com.intellij.ui.content.ContentFactory
 import com.intellij.util.ui.UIUtil
+import javax.swing.JPanel
+import com.intellij.ui.components.JBLabel
+import com.intellij.util.ui.JBUI
 
 class CodexCliToolWindowFactory : ToolWindowFactory, DumbAware {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val panel = CodexCliTerminalPanel(project)
-        val content = ContentFactory.getInstance().createContent(panel.component, "", false).apply {
-            isCloseable = false
-        }
+        val contentFactory = ContentFactory.getInstance()
+        val panelResult = runCatching { CodexCliTerminalPanel(project) }
+        val content = panelResult.fold(
+            onSuccess = { panel ->
+                contentFactory.createContent(panel.component, "", false).apply {
+                    isCloseable = false
+                    Disposer.register(this, panel)
+                }
+            },
+            onFailure = { throwable ->
+                LOG.warn("Failed to start Codex CLI terminal", throwable)
+                val fallback = JPanel(BorderLayout()).apply {
+                    border = JBUI.Borders.empty(8)
+                    add(JBLabel("Could not start Codex CLI: ${throwable.message ?: "unknown error"}"), BorderLayout.CENTER)
+                }
+                contentFactory.createContent(fallback, "", false).apply { isCloseable = false }
+            }
+        )
         toolWindow.contentManager.addContent(content)
-        Disposer.register(content, panel)
 
         ensureAboveTerminal(project, toolWindow.id)
     }
@@ -42,5 +60,9 @@ class CodexCliToolWindowFactory : ToolWindowFactory, DumbAware {
             updated.setAnchor(updatedCodexInfo, desiredPaneId, ToolWindowAnchor.BOTTOM, desiredOrder)
             manager.setLayout(updated)
         }
+    }
+
+    companion object {
+        private val LOG = logger<CodexCliToolWindowFactory>()
     }
 }

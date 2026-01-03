@@ -18,6 +18,10 @@ object CodexInlineCompletionUtils {
     private const val DEFAULT_MAX_SUFFIX_CHARS = 1000
     private const val MAX_SEMANTIC_CONTEXT_CHARS = 8000
     private const val IDEA_COMPLETION_DUMMY = "IntellijIdeaRulezzz"
+    private val FUNCTION_DECL_REGEX = Regex(
+        pattern = """(?i)^(?:\s*(?:public|protected|private|static|final)\s+)*function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(""",
+        options = setOf(RegexOption.MULTILINE)
+    )
 
     fun extractContext(
         text: CharSequence,
@@ -136,6 +140,12 @@ object CodexInlineCompletionUtils {
     private fun canonicalLine(line: String): String =
         line.filter { !it.isWhitespace() }.lowercase()
 
+    fun extractFunctionName(text: String): String? {
+        val firstLine = text.lineSequence().firstOrNull()?.trimStart() ?: return null
+        val match = FUNCTION_DECL_REGEX.find(firstLine) ?: return null
+        return match.groupValues.getOrNull(1)?.lowercase()
+    }
+
     private fun stripCommonPrefixes(text: String): String {
         val trimmed = text.trimStart()
         val prefixes = listOf("Assistant:", "Codex:", "Sure,", "Sure:")
@@ -191,5 +201,16 @@ object CodexInlineCompletionUtils {
         if (prefix.isBlank()) return null
 
         return prefix to suffix
+    }
+
+    fun collectFunctionNames(file: PsiFile): Set<String> {
+        val names = LinkedHashSet<String>()
+        PsiTreeUtil.findChildrenOfType(file, Method::class.java).forEach { method ->
+            method.name?.lowercase()?.let { names.add(it) }
+        }
+        PsiTreeUtil.findChildrenOfType(file, Function::class.java).forEach { function ->
+            function.name?.lowercase()?.let { names.add(it) }
+        }
+        return names
     }
 }

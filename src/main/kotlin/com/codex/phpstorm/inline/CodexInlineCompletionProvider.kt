@@ -75,11 +75,12 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
             val file = request.file
             val maxSuffixChars = settings.inlineCompletionSuffixChars.coerceIn(200, 8000)
             val (prefix, suffix) = CodexInlineCompletionUtils.buildContext(file, text, caretOffset, maxSuffixChars)
+            val existingFunctionNames = CodexInlineCompletionUtils.collectFunctionNames(file)
             if (prefix.isBlank()) return@runReadAction null
 
             val project = file.project
             val messages = CodexInlineCompletionPrompt.buildMessages(settings.systemPrompt, file, prefix, suffix)
-            PreparedInlineCompletion(project, messages, prefix, suffix)
+            PreparedInlineCompletion(project, messages, prefix, suffix, existingFunctionNames)
         } ?: return InlineCompletionSuggestion.empty()
 
         val project = prepared.project
@@ -113,6 +114,10 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
         var suggestion = CodexInlineCompletionUtils.sanitizeSuggestion(rawSuggestion)
         suggestion = CodexInlineCompletionUtils.stripLeadingEmptyParensIfPrefixEndsWithParen(prepared.prefix, suggestion)
         if (suggestion.isBlank()) return InlineCompletionSuggestion.empty()
+        val suggestedFunctionName = CodexInlineCompletionUtils.extractFunctionName(suggestion)
+        if (suggestedFunctionName != null && prepared.existingFunctionNames.contains(suggestedFunctionName)) {
+            return InlineCompletionSuggestion.empty()
+        }
         if (CodexInlineCompletionUtils.isDuplicateOfSuffix(suggestion, prepared.suffix) ||
             CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prepared.prefix)
         ) {
@@ -152,6 +157,7 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
         val project: Project,
         val messages: List<com.codex.phpstorm.client.ChatCompletionMessage>,
         val prefix: String,
-        val suffix: String
+        val suffix: String,
+        val existingFunctionNames: Set<String>
     )
 }
