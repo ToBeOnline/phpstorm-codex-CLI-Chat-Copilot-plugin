@@ -15,8 +15,8 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     env:
-      GRADLE_USER_HOME: ${{ runner.temp }}/gradle
-      PLUGIN_VERIFIER_HOME_DIR: ${{ runner.temp }}/pluginVerifier
+      GRADLE_USER_HOME: ${{ env.RUNNER_TEMP }}/gradle
+      PLUGIN_VERIFIER_HOME_DIR: ${{ env.RUNNER_TEMP }}/pluginVerifier
 
     steps:
       - name: Checkout
