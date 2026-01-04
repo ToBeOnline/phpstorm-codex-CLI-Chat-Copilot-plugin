@@ -30,6 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
 
     private val logger = Logger.getInstance(CodexInlineCompletionProvider::class.java)
+    private val emptySuggestion = InlineCompletionSuggestion.Default(flowOf())
 
     override val id: InlineCompletionProviderID = InlineCompletionProviderID("codex.inline")
 
@@ -47,14 +48,14 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
 
     override suspend fun getSuggestionDebounced(request: InlineCompletionRequest): InlineCompletionSuggestion {
         val settings = CodexSettingsState.getInstance().state
-        if (!settings.inlineCompletionEnabled) return InlineCompletionSuggestion.empty()
+        if (!settings.inlineCompletionEnabled) return emptySuggestion
 
-        if (!CodexInlineCompletionUtils.shouldTrigger(request)) return InlineCompletionSuggestion.empty()
+        if (!CodexInlineCompletionUtils.shouldTrigger(request)) return emptySuggestion
 
         val backend = runCatching { CodexBackend.valueOf(settings.backend) }.getOrDefault(CodexBackend.OPENAI_API)
         if (backend == CodexBackend.OPENAI_API && (settings.apiBaseUrl.isBlank() || settings.apiKey.isBlank())) {
             warnMissingApiConfigOnce()
-            return InlineCompletionSuggestion.empty()
+            return emptySuggestion
         }
 
         val inlineModel = when (backend) {
@@ -91,7 +92,7 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
             val project = file.project
             val messages = CodexInlineCompletionPrompt.buildMessages(settings.systemPrompt, file, prefix, suffix)
             PreparedInlineCompletion(project, messages, prefix, suffix, existingFunctionNames, atClassLevel)
-        } ?: return InlineCompletionSuggestion.empty()
+        } ?: return emptySuggestion
 
         val project = prepared.project
         val messages = prepared.messages
@@ -118,28 +119,28 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
         val rawSuggestion = rawSuggestionResult.getOrElse { error ->
             logger.info("Inline completion failed ($backend, model=$inlineModel): ${error.message}", error)
             maybeNotifyInlineCompletionError(project, backend, error)
-            return InlineCompletionSuggestion.empty()
+            return emptySuggestion
         }
 
         var suggestion = CodexInlineCompletionUtils.sanitizeSuggestion(rawSuggestion)
         suggestion = CodexInlineCompletionUtils.stripLeadingEmptyParensIfPrefixEndsWithParen(prepared.prefix, suggestion)
-        if (suggestion.isBlank()) return InlineCompletionSuggestion.empty()
+        if (suggestion.isBlank()) return emptySuggestion
         val suggestedFunctionName = CodexInlineCompletionUtils.extractFunctionName(suggestion)
         if (suggestedFunctionName != null) {
             val name = suggestedFunctionName
-            if (prepared.existingFunctionNames.contains(name)) return InlineCompletionSuggestion.empty()
-            if (CodexInlineCompletionUtils.suffixContainsFunctionName(prepared.suffix, name)) return InlineCompletionSuggestion.empty()
+            if (prepared.existingFunctionNames.contains(name)) return emptySuggestion
+            if (CodexInlineCompletionUtils.suffixContainsFunctionName(prepared.suffix, name)) return emptySuggestion
         }
         if (prepared.atClassLevel) {
             val firstLine = suggestion.lineSequence().firstOrNull()?.trimStart().orEmpty()
             if (firstLine.isNotEmpty() && !CodexInlineCompletionUtils.isClassMemberDeclaration(firstLine)) {
-                return InlineCompletionSuggestion.empty()
+                return emptySuggestion
             }
         }
         if (CodexInlineCompletionUtils.isDuplicateOfSuffix(suggestion, prepared.suffix) ||
             CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prepared.prefix)
         ) {
-            return InlineCompletionSuggestion.empty()
+            return emptySuggestion
         }
 
         val clipped = suggestion.take(MAX_SUGGESTION_CHARS)
