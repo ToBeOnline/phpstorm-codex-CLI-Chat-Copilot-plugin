@@ -2,11 +2,11 @@
 
 Plugin that brings Codex's CLI, chat workflow, and Copilot-style inline completions into JetBrains IDEs. Targeted for PhpStorm and IntelliJ IDEA Ultimate (with the PHP plugin), it mirrors the Visual Studio extension by adding a docked chat panel, quick actions for sending selections, an embedded Codex CLI terminal, and configurable backend settings.
 
-## Licentie
-Deze plugin is gelicentieerd onder de Apache License, Version 2.0. Zie het LICENSE-bestand voor de volledige tekst.
+## License
+This plugin is licensed under the Apache License, Version 2.0. See the LICENSE file for the full text.
 
 ## Disclaimer
-Deze plugin is niet gelieerd aan of ondersteund door JetBrains of OpenAI. Namen en merken worden alleen ter identificatie gebruikt.
+This plugin is not affiliated with or endorsed by JetBrains or OpenAI. Names and trademarks are used for identification only.
 
 ## Features
 - Tool window (`Codex Chat`) that keeps a running conversation with the assistant.
