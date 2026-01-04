@@ -146,6 +146,14 @@ object CodexInlineCompletionUtils {
         return match.groupValues.getOrNull(1)?.lowercase()
     }
 
+    fun suffixContainsFunctionName(suffix: String, name: String): Boolean {
+        if (name.isBlank()) return false
+        val regex = Regex("""(?i)\bfunction\s+$name\s*\(""")
+        // Limit to the nearby suffix (first ~2k chars) to keep it relevant and fast.
+        val window = suffix.take(2000)
+        return regex.containsMatchIn(window)
+    }
+
     private fun stripCommonPrefixes(text: String): String {
         val trimmed = text.trimStart()
         val prefixes = listOf("Assistant:", "Codex:", "Sure,", "Sure:")

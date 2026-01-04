@@ -115,8 +115,10 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
         suggestion = CodexInlineCompletionUtils.stripLeadingEmptyParensIfPrefixEndsWithParen(prepared.prefix, suggestion)
         if (suggestion.isBlank()) return InlineCompletionSuggestion.empty()
         val suggestedFunctionName = CodexInlineCompletionUtils.extractFunctionName(suggestion)
-        if (suggestedFunctionName != null && prepared.existingFunctionNames.contains(suggestedFunctionName)) {
-            return InlineCompletionSuggestion.empty()
+        if (suggestedFunctionName != null) {
+            val name = suggestedFunctionName
+            if (prepared.existingFunctionNames.contains(name)) return InlineCompletionSuggestion.empty()
+            if (CodexInlineCompletionUtils.suffixContainsFunctionName(prepared.suffix, name)) return InlineCompletionSuggestion.empty()
         }
         if (CodexInlineCompletionUtils.isDuplicateOfSuffix(suggestion, prepared.suffix) ||
             CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prepared.prefix)
