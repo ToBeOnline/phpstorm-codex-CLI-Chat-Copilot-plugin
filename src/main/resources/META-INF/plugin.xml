@@ -1,5 +1,5 @@
 <idea-plugin>
-  <id>com.codex.phpstorm</id>
+  <id>com.codex.cli.chat.copilot</id>
   <name>Codex CLI/Chat/Copilot</name>
   <vendor email="support@codex.example" url="https://codex.codes">Codex</vendor>
 
