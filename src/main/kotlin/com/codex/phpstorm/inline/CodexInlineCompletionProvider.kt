@@ -14,6 +14,10 @@ import com.intellij.codeInsight.inline.completion.elements.InlineCompletionGrayT
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.php.lang.psi.elements.Function
+import com.jetbrains.php.lang.psi.elements.Method
+import com.jetbrains.php.lang.psi.elements.PhpClass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
@@ -73,6 +77,12 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
             if (caretOffset < 0 || caretOffset > text.length) return@runReadAction null
 
             val file = request.file
+            val element = file.findElementAt(caretOffset)
+                ?: file.findElementAt((caretOffset - 1).coerceAtLeast(0))
+            val method = PsiTreeUtil.getParentOfType(element, Method::class.java, false)
+            val function = PsiTreeUtil.getParentOfType(element, Function::class.java, false)
+            val phpClass = PsiTreeUtil.getParentOfType(element, PhpClass::class.java, false)
+            val atClassLevel = method == null && function == null && phpClass != null
             val maxSuffixChars = settings.inlineCompletionSuffixChars.coerceIn(200, 8000)
             val (prefix, suffix) = CodexInlineCompletionUtils.buildContext(file, text, caretOffset, maxSuffixChars)
             val existingFunctionNames = CodexInlineCompletionUtils.collectFunctionNames(file)
@@ -80,7 +90,7 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
 
             val project = file.project
             val messages = CodexInlineCompletionPrompt.buildMessages(settings.systemPrompt, file, prefix, suffix)
-            PreparedInlineCompletion(project, messages, prefix, suffix, existingFunctionNames)
+            PreparedInlineCompletion(project, messages, prefix, suffix, existingFunctionNames, atClassLevel)
         } ?: return InlineCompletionSuggestion.empty()
 
         val project = prepared.project
@@ -119,6 +129,12 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
             val name = suggestedFunctionName
             if (prepared.existingFunctionNames.contains(name)) return InlineCompletionSuggestion.empty()
             if (CodexInlineCompletionUtils.suffixContainsFunctionName(prepared.suffix, name)) return InlineCompletionSuggestion.empty()
+        }
+        if (prepared.atClassLevel) {
+            val firstLine = suggestion.lineSequence().firstOrNull()?.trimStart().orEmpty()
+            if (firstLine.isNotEmpty() && !CodexInlineCompletionUtils.isClassMemberDeclaration(firstLine)) {
+                return InlineCompletionSuggestion.empty()
+            }
         }
         if (CodexInlineCompletionUtils.isDuplicateOfSuffix(suggestion, prepared.suffix) ||
             CodexInlineCompletionUtils.isEchoingPrefix(suggestion, prepared.prefix)
@@ -160,6 +176,7 @@ class CodexInlineCompletionProvider : DebouncedInlineCompletionProvider() {
         val messages: List<com.codex.phpstorm.client.ChatCompletionMessage>,
         val prefix: String,
         val suffix: String,
-        val existingFunctionNames: Set<String>
+        val existingFunctionNames: Set<String>,
+        val atClassLevel: Boolean
     )
 }

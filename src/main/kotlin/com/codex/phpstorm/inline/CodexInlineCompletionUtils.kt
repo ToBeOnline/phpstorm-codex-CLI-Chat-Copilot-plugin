@@ -154,6 +154,25 @@ object CodexInlineCompletionUtils {
         return regex.containsMatchIn(window)
     }
 
+    fun isClassMemberDeclaration(firstLine: String): Boolean {
+        val trimmed = firstLine.trimStart()
+        if (trimmed.isEmpty()) return false
+        if (trimmed.startsWith("$")) return false
+        val prefixes = listOf(
+            "function",
+            "public ",
+            "protected ",
+            "private ",
+            "abstract ",
+            "final ",
+            "static ",
+            "const ",
+            "var ",
+            "readonly "
+        )
+        return prefixes.any { trimmed.startsWith(it, ignoreCase = true) }
+    }
+
     private fun stripCommonPrefixes(text: String): String {
         val trimmed = text.trimStart()
         val prefixes = listOf("Assistant:", "Codex:", "Sure,", "Sure:")
